@@ -32,7 +32,7 @@ client.once('ready', () => {
 	  listboss();
 	});
 	*/
-	listboss();
+	//listboss();
 	//console.log('Ready!');
 });
 
