@@ -9,8 +9,7 @@ let s3 = new aws.S3({
 });
 
 
-console.log(s3.BOT_TOKEN);
-console.log(s3.JAWSDB_URL);
+console.log(s3);
 /*
 
 
