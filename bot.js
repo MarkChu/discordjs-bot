@@ -112,22 +112,23 @@ function listboss(){
 		sqlstr += "order by bossid ";	
 
 	connection.query(sqlstr, function(err, rows, fields) {
-	    //if (err) throw err;
+	    if (err){
+	    	console.log(sqlstr , err);	
+	    }else{
+			var recordset = rows;
+			var msgcontent = "";
+			for(i=0;i<recordset.length;i++)
+			{
 
-		var recordset = rows;
-		var msgcontent = "";
-		for(i=0;i<recordset.length;i++)
-		{
+				var row = recordset[i];
+				msgcontent += "【" + row.bossid + " - 預計時間:"+row.reborn+" - 距離現在："+ row.dues +"分鐘】\n";
+				
+				//message.channel.send(msgcontent);						
+			}
+			//Hook.info("小馬怪",msgcontent);
+			console.log('send');
+	    } 
 
-			var row = recordset[i];
-			msgcontent += "【" + row.bossid + " - 預計時間:"+row.reborn+" - 距離現在："+ row.dues +"分鐘】\n";
-			
-			//message.channel.send(msgcontent);						
-		}
-		//Hook.info("小馬怪",msgcontent);
-		console.log('send');
-
-	  //console.log('The solution is: ', rows[0].solution);
 	});
 
 }
