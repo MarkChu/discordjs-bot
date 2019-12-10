@@ -12,8 +12,6 @@ const Hook = new webhook.Webhook("https://discordapp.com/api/webhooks/6539663675
 const mysql = require('mysql');
 const connection = mysql.createConnection(jawsdb);
 
-connection.connect();
-
 
 
 
@@ -111,6 +109,7 @@ function listboss(){
 		sqlstr += "where reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
 		sqlstr += "order by bossid ";	
 
+	connection.connect();
 	connection.query(sqlstr, function(err, rows, fields) {
 	    if (err){
 	    	console.log(sqlstr , err);	
@@ -130,7 +129,7 @@ function listboss(){
 	    } 
 
 	});
-
+	connection.end();
 }
 
 
@@ -436,4 +435,3 @@ client.on('message', message => {
 
 
 */
-connection.end();
