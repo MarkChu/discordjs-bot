@@ -8,8 +8,38 @@ let s3 = new aws.S3({
   JAWSDB_URL: process.env.JAWSDB_URL
 });
 
+const token = s3.config.BOT_TOKEN;
+const prefix = "^";
 
-console.log(s3.config.BOT_TOKEN);
+const schedule = require('node-schedule');
+const webhook = require("webhook-discord");
+const Hook = new webhook.Webhook("https://discordapp.com/api/webhooks/653966367535398912/ABIrRHZq4yq43P4Tcsj3fMBhTZ_cbSfSXYBF2TXaRWF29l5frbb5ICMHq6lDlAO92G9A");
+
+
+// create a new Discord client
+const client = new Discord.Client();
+
+// when the client is ready, run this code
+// this event will only trigger one time after logging in
+client.once('ready', () => {
+	console.log('Ready!');
+	/*
+	var j = schedule.scheduleJob('0 * * * * *', function(){
+	  //每到0秒時執行一次(每分鐘)
+	  checkboss();
+	});
+	var j1 = schedule.scheduleJob('* 0 * * * *', function(){
+	  //每到0分時執行一次(每小時)
+	  listboss();
+	});
+	*/
+	//console.log('Ready!');
+});
+
+// login to Discord with your app's token
+client.login(token);
+
+
 /*
 
 
