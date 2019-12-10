@@ -125,7 +125,7 @@ function listboss(){
 				//message.channel.send(msgcontent);						
 			}
 			//Hook.info("小馬怪",msgcontent);
-			console.log('send');
+			console.log(msgcontent);
 	    } 
 
 	});
