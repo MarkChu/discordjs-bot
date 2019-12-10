@@ -9,7 +9,7 @@ let s3 = new aws.S3({
 });
 
 
-console.log(s3);
+console.log(s3.config.BOT_TOKEN);
 /*
 
 
