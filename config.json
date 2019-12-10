@@ -1,10 +1,11 @@
 {
-	"prefix": "!",
-	"token": "NjUzNjAxNjM5MjYwNzQ5ODM1.Xe9p4g.NtvT4F-HovZRWPgifaFyhX37HqQ",
+	"prefix": "^",
+	"token": "NjUzNjAxNjM5MjYwNzQ5ODM1.Xe9suQ.8ZgIJs7zRW0np0D0kK3uQrMT9AI",
 	"meaning_of_life": 42,
 	"passwords_array": ["please", "dont", "hack", "me"],
 	"secret_passcodes": {
 		"bank": 1234,
 		"home": 4321
-	}
+	},
+	"firebase_url":"https://discordbot-lineage2m.firebaseio.com/"
 }
