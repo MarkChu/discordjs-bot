@@ -11,7 +11,7 @@ const Hook = new webhook.Webhook("https://discordapp.com/api/webhooks/6539663675
 const mysql = require('mysql');
 const connection = mysql.createConnection(jawsdb);
 
-
+http.createServer(onRequest).listen(process.env.PORT || 6000)
 
 
 // create a new Discord client
