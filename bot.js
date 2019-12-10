@@ -9,6 +9,13 @@ const schedule = require('node-schedule');
 const webhook = require("webhook-discord");
 const Hook = new webhook.Webhook("https://discordapp.com/api/webhooks/653966367535398912/ABIrRHZq4yq43P4Tcsj3fMBhTZ_cbSfSXYBF2TXaRWF29l5frbb5ICMHq6lDlAO92G9A");
 
+const mysql = require('mysql');
+const connection = mysql.createConnection(jawsdb);
+
+connection.connect();
+
+
+
 
 // create a new Discord client
 const client = new Discord.Client();
@@ -17,20 +24,6 @@ const client = new Discord.Client();
 // this event will only trigger one time after logging in
 client.once('ready', () => {
 	console.log('Ready!');
-
-
-	var mysql = require('mysql');
-	var connection = mysql.createConnection(jawsdb);
-
-	connection.connect();
-
-	connection.query('SELECT 1 + 1 AS solution', function(err, rows, fields) {
-	  if (err) throw err;
-
-	  console.log('The solution is: ', rows[0].solution);
-	});
-
-	connection.end();
 
 	/*
 	var j = schedule.scheduleJob('0 * * * * *', function(){
@@ -42,6 +35,7 @@ client.once('ready', () => {
 	  listboss();
 	});
 	*/
+	listboss();
 	//console.log('Ready!');
 });
 
@@ -49,48 +43,14 @@ client.once('ready', () => {
 client.login(token);
 
 
-
-
-
-
-
-
-/*
-
-
-const config = require('./config.json');
-const sql = require('mssql');
-const db = require('./config/db.js');
-const schedule = require('node-schedule');
-
-const { prefix, token } = require('./config.json');
-const webhook = require("webhook-discord");
-const Hook = new webhook.Webhook("https://discordapp.com/api/webhooks/653966367535398912/ABIrRHZq4yq43P4Tcsj3fMBhTZ_cbSfSXYBF2TXaRWF29l5frbb5ICMHq6lDlAO92G9A");
-
-
-
-// create a new Discord client
-const client = new Discord.Client();
-
-// when the client is ready, run this code
-// this event will only trigger one time after logging in
-client.once('ready', () => {
-	console.log('Ready!');
-	var j = schedule.scheduleJob('0 * * * * *', function(){
-	  //每到0秒時執行一次(每分鐘)
-	  checkboss();
-	});
-	var j1 = schedule.scheduleJob('* 0 * * * *', function(){
-	  //每到0分時執行一次(每小時)
-	  listboss();
-	});
-	//console.log('Ready!');
-});
-
-// login to Discord with your app's token
-client.login(token);
 
 function checkboss(){
+
+
+
+
+
+
 
 	sql.connect(db, err => {
 	    // ... error checks
@@ -142,42 +102,75 @@ function checkboss(){
 
 function listboss(){
 
-	sql.connect(db, err => {
-	    // ... error checks
-		var sqlstr = "select bossid,imgurl ";			    
-			sqlstr += ",convert(varchar(16),killtime,120) as killed ";
-			sqlstr += ",convert(varchar(16),reborntime,120) as reborn ";
-			sqlstr += ",datediff(n,dbo.now(),reborntime) as dues ";
-			sqlstr += ",cycletime ";
-			sqlstr += "from tblboss ";
-			sqlstr += "where reborntime > dbo.now() ";
-			sqlstr += "order by bossid ";		    
-	    // Query
+	var sqlstr = "select bossid,imgurl ";			    
+		sqlstr += ",left(convert(killtime,DATETIME),16) as killed ";
+		sqlstr += ",left(convert(reborntime,DATETIME),16) as reborn ";
+		sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
+		sqlstr += ",cycletime ";
+		sqlstr += "from tblboss ";
+		sqlstr += "where reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
+		sqlstr += "order by bossid ";	
 
-	    new sql.Request().query(sqlstr, (err, result) => {
-	        // ... error checks
-	        if(err!=null)
-	        {
-		        var recordset = result.recordset;
-		        var msgcontent = "";
-		        for(i=0;i<recordset.length;i++)
-		        {
+	connection.query(sqlstr, function(err, rows, fields) {
+	  if (err) throw err;
 
-					var row = recordset[i];
-		        	msgcontent += "【" + row.bossid + " - 預計時間:"+row.reborn+" - 距離現在："+ row.dues +"分鐘】\n";
-		        	
-					//message.channel.send(msgcontent);						
-		        }
-		        Hook.info("小馬怪",msgcontent);
-		        //console.log('send');
+		var recordset = rows;
+		var msgcontent = "";
+		for(i=0;i<recordset.length;i++)
+		{
 
-	        }
-	        //console.dir(result)
-	    })
-	})
+			var row = recordset[i];
+			msgcontent += "【" + row.bossid + " - 預計時間:"+row.reborn+" - 距離現在："+ row.dues +"分鐘】\n";
+			
+			//message.channel.send(msgcontent);						
+		}
+		//Hook.info("小馬怪",msgcontent);
+		console.log('send');
 
+	  //console.log('The solution is: ', rows[0].solution);
+	});
 
 }
+
+
+
+
+/*
+
+
+const config = require('./config.json');
+const sql = require('mssql');
+const db = require('./config/db.js');
+const schedule = require('node-schedule');
+
+const { prefix, token } = require('./config.json');
+const webhook = require("webhook-discord");
+const Hook = new webhook.Webhook("https://discordapp.com/api/webhooks/653966367535398912/ABIrRHZq4yq43P4Tcsj3fMBhTZ_cbSfSXYBF2TXaRWF29l5frbb5ICMHq6lDlAO92G9A");
+
+
+
+// create a new Discord client
+const client = new Discord.Client();
+
+// when the client is ready, run this code
+// this event will only trigger one time after logging in
+client.once('ready', () => {
+	console.log('Ready!');
+	var j = schedule.scheduleJob('0 * * * * *', function(){
+	  //每到0秒時執行一次(每分鐘)
+	  checkboss();
+	});
+	var j1 = schedule.scheduleJob('* 0 * * * *', function(){
+	  //每到0分時執行一次(每小時)
+	  listboss();
+	});
+	//console.log('Ready!');
+});
+
+// login to Discord with your app's token
+client.login(token);
+
+
 
 
 
@@ -442,3 +435,4 @@ client.on('message', message => {
 
 
 */
+connection.end();
