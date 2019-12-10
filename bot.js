@@ -112,7 +112,7 @@ function listboss(){
 		sqlstr += "order by bossid ";	
 
 	connection.query(sqlstr, function(err, rows, fields) {
-	  if (err) throw err;
+	    //if (err) throw err;
 
 		var recordset = rows;
 		var msgcontent = "";
