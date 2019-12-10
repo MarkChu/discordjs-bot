@@ -1,6 +1,5 @@
 // require the discord.js module
 const Discord = require('discord.js');
-
 const token = process.env.BOT_TOKEN;
 const jawsdb = process.env.JAWSDB_URL;
 const prefix = "^";
