@@ -1,14 +1,8 @@
 // require the discord.js module
 const Discord = require('discord.js');
 
-const aws = require('aws-sdk');
-
-let s3 = new aws.S3({
-  BOT_TOKEN: process.env.BOT_TOKEN,
-  JAWSDB_URL: process.env.JAWSDB_URL
-});
-
-const token = s3.config.BOT_TOKEN;
+const token = process.env.BOT_TOKEN;
+const jawsdb = process.env.JAWSDB_URL;
 const prefix = "^";
 
 const schedule = require('node-schedule');
@@ -23,6 +17,21 @@ const client = new Discord.Client();
 // this event will only trigger one time after logging in
 client.once('ready', () => {
 	console.log('Ready!');
+
+
+	var mysql = require('mysql');
+	var connection = mysql.createConnection(jawsdb);
+
+	connection.connect();
+
+	connection.query('SELECT 1 + 1 AS solution', function(err, rows, fields) {
+	  if (err) throw err;
+
+	  console.log('The solution is: ', rows[0].solution);
+	});
+
+	connection.end();
+
 	/*
 	var j = schedule.scheduleJob('0 * * * * *', function(){
 	  //每到0秒時執行一次(每分鐘)
@@ -38,6 +47,12 @@ client.once('ready', () => {
 
 // login to Discord with your app's token
 client.login(token);
+
+
+
+
+
+
 
 
 /*
