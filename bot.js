@@ -45,30 +45,27 @@ client.login(token);
 function checkboss(){
 
 
+	var sqlstr = "select bossid,imgurl ";			    
+		sqlstr += ",left(convert(killtime,DATETIME),16) as killed ";
+		sqlstr += ",left(convert(reborntime,DATETIME),16) as reborn ";
+		sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
+		sqlstr += ",cycletime ";
+		sqlstr += "from tblboss ";
+		sqlstr += "where reborntime IS NOT null ";
+		sqlstr += "and TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime )  in (0 ,5 ,10) ";
+		sqlstr += "order by 4 ";	
 
+	connection.connect();
+	connection.query(sqlstr, function(err, rows, fields) {
+	    if (err){
+	    	console.log(sqlstr , err);	
+	    }else{
+			var recordset = rows;
+			var msgcontent = "";
+			for(i=0;i<recordset.length;i++)
+			{
 
-
-
-
-	sql.connect(db, err => {
-	    // ... error checks
-		var sqlstr = "select bossid,imgurl ";			    
-			sqlstr += ",convert(varchar(16),killtime,120) as killed ";
-			sqlstr += ",convert(varchar(16),reborntime,120) as reborn ";
-			sqlstr += ",datediff(n,dbo.now(),reborntime) as dues ";
-			sqlstr += ",cycletime ";
-			sqlstr += "from tblboss ";
-			sqlstr += "where reborntime is not null ";
-			sqlstr += "and datediff(n,dbo.now(),reborntime) in (0 ,5 ,10) ";
-			sqlstr += "order by 4 ";		    
-	    // Query
-
-	    new sql.Request().query(sqlstr, (err, result) => {
-	        // ... error checks
-	        var recordset = result.recordset;
-
-	        for(i=0;i<recordset.length;i++){
-	        	var row = recordset[i];
+				var row = recordset[i];
 	        	var msgcontent = "野王出沒通知：【" + row.bossid + "】";
 	        	//console.log(row);
 	        	if(parseInt(row.dues)==0){
@@ -89,11 +86,14 @@ function checkboss(){
 
 				Hook.send(msg);
 				
-	        }
-	        //console.dir(result)
-	    })
-	})
+				//message.channel.send(msgcontent);						
+			}
+			//Hook.info("小馬怪",msgcontent);
+			//console.log(msgcontent);
+	    } 
 
+	});
+	connection.end();
 
 }
 
@@ -124,8 +124,8 @@ function listboss(){
 				
 				//message.channel.send(msgcontent);						
 			}
-			//Hook.info("小馬怪",msgcontent);
-			console.log(msgcontent);
+			Hook.info("小馬怪",msgcontent);
+			//console.log(msgcontent);
 	    } 
 
 	});
