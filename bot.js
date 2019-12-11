@@ -234,6 +234,8 @@ client.on('message', message => {
 					  if (error) handleError(error);
 					  message.channel.send("野王編號 【"+bossid+"】 已清空!!");
 					})
+				}else{
+					message.channel.send("野王編號錯誤，【"+bossid+"】 不存在!!, 請重新輸入!!");
 				}
 
 			}
@@ -279,7 +281,7 @@ client.on('message', message => {
 				    if (err) handleError(err);
 				    	
 					var recordset = rows;
-
+					console.log(rows);
 					if(!recordset.length){
 			        	message.channel.send("野王編號錯誤，【"+bossid+"】 不存在!!, 請重新輸入!!");
 			        }else{
@@ -304,6 +306,8 @@ client.on('message', message => {
 					  if (error) handleError(error);
 					  message.channel.send("野王編號 【"+bossid+"】 下次重生時間已更新!!");
 					})
+				}else{
+					message.channel.send("野王編號錯誤，【"+bossid+"】 不存在!!, 請重新輸入!!");
 				}	
 
 			}
