@@ -11,18 +11,6 @@ const Hook = new webhook.Webhook("https://discordapp.com/api/webhooks/6539663675
 const mysql = require('mysql');
 const connection = mysql.createConnection(jawsdb);
 
-const http = require('http');
-const port = 6000;
-const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader("Content-Type", "text/plain");
-  res.end("Hello World\n");
-});
-const hostname = '127.0.0.1';
-//http.createServer(onRequest).listen(process.env.PORT || 6000)
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
 
 // create a new Discord client
 const client = new Discord.Client();
