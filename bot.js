@@ -37,37 +37,11 @@ client.once('ready', () => {
 	  //每到0分時執行一次(每小時)
 	  listboss();
 	});
-	//console.log('Ready!');
-	sqltest();
 
 });
 
 // login to Discord with your app's token
 client.login(token);
-
-
-
-function sqltest(){
-
-	var tz = process.env.TZ;
-	var date = new Date();
-	console.log(tz, '||', date);
-
-	var sqlstr = "select convert(now(),DATETIME) as today; ";			    
-
-	pool.query(sqlstr, function(err, rows, fields) {
-		if (err) handleError(err);
-	    
-		var recordset = rows;
-		var msgcontent = "";
-		for(i=0;i<recordset.length;i++)
-		{
-			var row = recordset[i];
-			console.log(row.today);
-		}
-	});
-
-}
 
 
 
@@ -148,7 +122,9 @@ function listboss(){
 			
 			//message.channel.send(msgcontent);						
 		}
-		Hook.info("小馬怪",msgcontent);
+		if(msgcontent!=""){
+			Hook.info("小馬怪",msgcontent);	
+		}
 		//console.log(msgcontent);
 
 	});
@@ -206,27 +182,13 @@ client.on('message', message => {
 					//console.log(killtime);	
 				}
 		
-				sql.connect(db, err => {
-				    // ... error checks
-					var	update_sql =  "update tblboss set killtime = dateadd(n,10,'"+fixtime+"') " ;
-		        		update_sql += "		,reborntime = dateadd(n, (cycletime*60 + 10) ,'"+fixtime+"')  " ;
+				var	update_sql =  "update tblboss set killtime = DATE_ADD('"+fixtime+"',INTERVAL 10 MINUTE ) " ;
+		        	update_sql += "		,reborntime = DATE_ADD('"+fixtime+"',INTERVAL cycletime*60+10 MINUTE ) " ;
 
-					const transaction = new sql.Transaction()
-					transaction.begin(err => {
-					    // ... error checks
-
-					    const request = new sql.Request(transaction)
-					    request.query(update_sql, (err, result) => {
-					        // ... error checks
-
-					        transaction.commit(err => {
-					            // ... error checks
-					            message.channel.send("野王重生時間已全部重置!!");
-					        })
-					    })
-					})
-
-				})			
+				pool.query(update_sql, function (error, results, fields) {
+				  if (error) handleError(error);
+				  message.channel.send("野王重生時間已全部重置!!");
+				})
 
 			}
 			
@@ -246,47 +208,33 @@ client.on('message', message => {
 			}else{
 
 				var bossid = args[0];
+				var uniqid = "";
+				var sqlstr = "select uniqid ";			    
+					sqlstr += "from tblboss ";
+					sqlstr += "where bossid='"+bossid+"'";
 				
-				sql.connect(db, err => {
-				    // ... error checks
-					var sqlstr = "select uniqid ";			    
-						sqlstr += "from tblboss ";
-						sqlstr += "where bossid='"+bossid+"'";
-				    // Query
+				pool.query(sqlstr, function(err, rows, fields) {
+				    if (err) handleError(err);
+				    	
+					var recordset = rows;
 
-				    new sql.Request().query(sqlstr, (err, result) => {
-				        // ... error checks
-				        var recordset = result.recordset;
-				        if(!recordset.length){
-				        	message.channel.send("野王編號錯誤，【"+bossid+"】 不存在!!, 請重新輸入!!");
-				        }else{
-				        	var uniqid = recordset[0].uniqid;
-				        	
-				        	var	update_sql =  "update tblboss set killtime= null " ;
-				        		update_sql += "		,reborntime = null  " ;
-				        		update_sql += "where uniqid="+uniqid+" " ;
+					if(!recordset.length){
+			        	message.channel.send("野王編號錯誤，【"+bossid+"】 不存在!!, 請重新輸入!!");
+			        }else{
+			        	uniqid = recordset[0].uniqid;
+			        }
+				});
 
+				if(uniqid!=""){
+					var	update_sql =  "update tblboss set killtime= null " ;
+			        	update_sql += "		,reborntime = null  " ;
+			        	update_sql += "where uniqid="+uniqid+" " ;
 
-							const transaction = new sql.Transaction()
-							transaction.begin(err => {
-							    // ... error checks
-
-							    const request = new sql.Request(transaction)
-							    request.query(update_sql, (err, result) => {
-							        // ... error checks
-
-							        transaction.commit(err => {
-							            // ... error checks
-							            message.channel.send("野王編號 【"+bossid+"】 已清空!!");
-							        })
-							    })
-							})
-			        	
-				        }
-
-				    })
-				})
-				
+					pool.query(update_sql, function (error, results, fields) {
+					  if (error) handleError(error);
+					  message.channel.send("野王編號 【"+bossid+"】 已清空!!");
+					})
+				}
 
 			}
 			
@@ -306,6 +254,7 @@ client.on('message', message => {
 			}else{
 
 				var bossid = args[0];
+				var uniqid = "";
 				var killtime = "";
 				if(args.length>1){
 					input_time = args[1];
@@ -321,53 +270,41 @@ client.on('message', message => {
 						//console.log(killtime);	
 					}
 				}
-
-				sql.connect(db, err => {
-				    // ... error checks
-					var sqlstr = "select uniqid ";			    
-						sqlstr += "from tblboss ";
-						sqlstr += "where bossid='"+bossid+"'";
-				    // Query
-
-				    new sql.Request().query(sqlstr, (err, result) => {
-				        // ... error checks
-				        var recordset = result.recordset;
-				        if(!recordset.length){
-				        	message.channel.send("野王編號錯誤，【"+bossid+"】 不存在!!, 請重新輸入!!");
-				        }else{
-				        	var uniqid = recordset[0].uniqid;
-				        	var update_sql = "";
-				        	if(killtime==""){
-				        		update_sql =  "update tblboss set killtime=dateadd(n,-3,dbo.now()) " ;
-				        		update_sql += "		,reborntime = dateadd(n,cycletime*60,dateadd(n,-3,dbo.now()))  " ;
-				        		update_sql += "where uniqid="+uniqid+" " ;
-				        	}else{
-				        		update_sql =  "update tblboss set killtime='"+killtime+"' " ;
-				        		update_sql += "		,reborntime = dateadd(n,cycletime*60,'"+killtime+"')  " ;
-				        		update_sql += "where uniqid="+uniqid+" " ;
-				        	}
-
-
-							const transaction = new sql.Transaction()
-							transaction.begin(err => {
-							    // ... error checks
-
-							    const request = new sql.Request(transaction)
-							    request.query(update_sql, (err, result) => {
-							        // ... error checks
-
-							        transaction.commit(err => {
-							            // ... error checks
-							            message.channel.send("野王編號 【"+bossid+"】 下次重生時間已更新!!");
-							        })
-							    })
-							})
-			        	
-				        }
-
-				    })
-				})
+			
+				var sqlstr = "select uniqid ";			    
+					sqlstr += "from tblboss ";
+					sqlstr += "where bossid='"+bossid+"'";
 				
+				pool.query(sqlstr, function(err, rows, fields) {
+				    if (err) handleError(err);
+				    	
+					var recordset = rows;
+
+					if(!recordset.length){
+			        	message.channel.send("野王編號錯誤，【"+bossid+"】 不存在!!, 請重新輸入!!");
+			        }else{
+			        	uniqid = recordset[0].uniqid;
+			        }
+				});
+
+				if(uniqid!=""){
+
+					var	update_sql = "";
+		        	if(killtime==""){
+		        		update_sql =  "update tblboss set killtime= DATE_ADD(NOW(),INTERVAL 477 MINUTE) " ;
+		        		update_sql += "		,reborntime = DATE_ADD(DATE_ADD(NOW(),INTERVAL 477 MINUTE),INTERVAL cycletime*60 MINUTE)  " ;
+		        		update_sql += "where uniqid="+uniqid+" " ;
+		        	}else{
+		        		update_sql =  "update tblboss set killtime='"+killtime+"' " ;
+		        		update_sql += "		,reborntime = DATE_ADD('"+killtime+"',INTERVAL cycletime*60 MINUTE)  " ;
+		        		update_sql += "where uniqid="+uniqid+" " ;
+		        	}
+
+					pool.query(update_sql, function (error, results, fields) {
+					  if (error) handleError(error);
+					  message.channel.send("野王編號 【"+bossid+"】 下次重生時間已更新!!");
+					})
+				}	
 
 			}
 			
@@ -378,35 +315,35 @@ client.on('message', message => {
 			break;
 		case 'boss':
 
-			sql.connect(db, err => {
-			    // ... error checks
-				var sqlstr = "select bossid,imgurl ";			    
-					sqlstr += ",convert(varchar(16),killtime,120) as killed ";
-					sqlstr += ",convert(varchar(16),reborntime,120) as reborn ";
-					sqlstr += ",datediff(n,dbo.now(),reborntime) as dues ";
-					sqlstr += ",cycletime ";
-					sqlstr += "from tblboss ";
-					sqlstr += "where reborntime > dbo.now() ";
-					sqlstr += "order by 4 ";		    
-			    // Query
 
-			    new sql.Request().query(sqlstr, (err, result) => {
-			        // ... error checks
-			        var recordset = result.recordset;
-			        var msgcontent = "";
+			var sqlstr = "select bossid,imgurl ";			    
+				sqlstr += ",left(convert(killtime,DATETIME),16) as killed ";
+				sqlstr += ",left(convert(reborntime,DATETIME),16) as reborn ";
+				sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
+				sqlstr += ",cycletime ";
+				sqlstr += "from tblboss ";
+				sqlstr += "where reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
+				sqlstr += "order by bossid ";	
 
-			        for(i=0;i<recordset.length;i++){
+			pool.query(sqlstr, function(err, rows, fields) {
+			    if (err) handleError(err);
+			    	
+				var recordset = rows;
+				var msgcontent = "";
+				for(i=0;i<recordset.length;i++)
+				{
 
-						var row = recordset[i];
-			        	msgcontent += "【" + row.bossid + " - 預計時間:"+row.reborn+" - 距離現在："+ row.dues +"分鐘】\n";
-			        }
+					var row = recordset[i];
+					msgcontent += "【" + row.bossid + " - 預計時間:"+row.reborn+" - 距離現在："+ row.dues +"分鐘】\n";
+					
+					//message.channel.send(msgcontent);						
+				}
+				if(msgcontent!=""){
+					message.channel.send(msgcontent);	
+				}
+				//console.log(msgcontent);
 
-					message.channel.send(msgcontent);						
-
-			        //console.dir(result)
-			    })
-			})
-
+			});
 
 			//message.channel.send('test!');
 			break;
