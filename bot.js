@@ -340,6 +340,8 @@ client.on('message', message => {
 				}
 				if(msgcontent!=""){
 					message.channel.send(msgcontent);	
+				}else{
+					message.channel.send("目前的野王都沒有擊殺記錄喔!!");	
 				}
 				//console.log(msgcontent);
 
