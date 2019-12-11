@@ -10,13 +10,14 @@ const Hook = new webhook.Webhook("https://discordapp.com/api/webhooks/6539663675
 
 var mysql = require('mysql');
 
+
 var pool  = mysql.createPool({
   connectionLimit : 10,
   host            : process.env.DB_SERVER,
   user            : process.env.DB_USER,
   password        : process.env.DB_PASSWORD,
   database        : process.env.DB_NAME
-  ,timezone:"+08:00"
+  ,timezone:"+12:00"
 });
 
 
