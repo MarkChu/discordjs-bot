@@ -11,7 +11,7 @@ const Hook = new webhook.Webhook("https://discordapp.com/api/webhooks/6539663675
 const mysql = require('mysql');
 const connection = mysql.createConnection(jawsdb);
 
-
+const http = require('http');
 const port = 6000;
 const server = http.createServer((req, res) => {
   res.statusCode = 200;
