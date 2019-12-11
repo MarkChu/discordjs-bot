@@ -182,8 +182,10 @@ client.on('message', message => {
 					//console.log(killtime);	
 				}
 		
-				var	update_sql =  "update tblboss set killtime = DATE_ADD('"+fixtime+"',INTERVAL 10 MINUTE ) " ;
-		        	update_sql += "		,reborntime = DATE_ADD('"+fixtime+"',INTERVAL cycletime*60+10 MINUTE ) " ;
+				var q_kill = mysql.raw("DATE_ADD('"+fixtime+"',INTERVAL 10 MINUTE )");
+				var q_reborn = mysql.raw("DATE_ADD('"+fixtime+"',INTERVAL cycletime*60+10 MINUTE )");
+
+				var update_sql = mysql.format('UPDATE tblboss SET killtime = ? ,reborntime = ? ', [q_kill, q_reborn]);
 
 				pool.query(update_sql, function (error, results, fields) {
 				  if (error) handleError(error);
@@ -226,9 +228,10 @@ client.on('message', message => {
 				});
 
 				if(uniqid!=""){
-					var	update_sql =  "update tblboss set killtime= null " ;
-			        	update_sql += "		,reborntime = null  " ;
-			        	update_sql += "where uniqid="+uniqid+" " ;
+
+					var q_kill = mysql.raw("NULL");
+					var q_reborn = mysql.raw("NULL");
+					var update_sql = mysql.format('UPDATE tblboss SET killtime = ? ,reborntime = ? WHERE uniqid= ? ', [q_kill, q_reborn , parseInt(uniqid) ]);
 
 					pool.query(update_sql, function (error, results, fields) {
 					  if (error) handleError(error);
@@ -281,7 +284,10 @@ client.on('message', message => {
 				    if (err) handleError(err);
 				    	
 					var recordset = rows;
-					console.log(rows);
+					console.log("rows",rows);
+					console.log("rows.length",rows.length);
+					console.log("rows.uniqid",rows.uniqid);
+					console.log("rows[0]",rows[0]);
 					if(!recordset.length){
 			        	message.channel.send("野王編號錯誤，【"+bossid+"】 不存在!!, 請重新輸入!!");
 			        }else{
@@ -292,15 +298,20 @@ client.on('message', message => {
 				if(uniqid!=""){
 
 					var	update_sql = "";
+					var q_kill = "";
+					var q_reborn = "";
+
 		        	if(killtime==""){
-		        		update_sql =  "update tblboss set killtime= DATE_ADD(NOW(),INTERVAL 477 MINUTE) " ;
-		        		update_sql += "		,reborntime = DATE_ADD(DATE_ADD(NOW(),INTERVAL 477 MINUTE),INTERVAL cycletime*60 MINUTE)  " ;
-		        		update_sql += "where uniqid="+uniqid+" " ;
+
+		        		q_kill = mysql.raw("DATE_ADD(NOW(),INTERVAL 477 MINUTE)");
+						q_reborn = mysql.raw("DATE_ADD(DATE_ADD(NOW(),INTERVAL 477 MINUTE),INTERVAL cycletime*60 MINUTE)");
+
 		        	}else{
-		        		update_sql =  "update tblboss set killtime='"+killtime+"' " ;
-		        		update_sql += "		,reborntime = DATE_ADD('"+killtime+"',INTERVAL cycletime*60 MINUTE)  " ;
-		        		update_sql += "where uniqid="+uniqid+" " ;
+		        		q_kill = mysql.raw("'"+killtime+"'");
+						q_reborn = mysql.raw("DATE_ADD('"+killtime+"',INTERVAL cycletime*60 MINUTE)");
 		        	}
+
+					var update_sql = mysql.format('UPDATE tblboss SET killtime = ? ,reborntime = ? WHERE uniqid= ? ', [q_kill, q_reborn , parseInt(uniqid) ]);
 
 					pool.query(update_sql, function (error, results, fields) {
 					  if (error) handleError(error);
