@@ -280,19 +280,13 @@ client.on('message', message => {
 					sqlstr += "from tblboss ";
 					sqlstr += "where bossid='"+bossid+"'";
 				
-				pool.query(sqlstr, function(err, rows, fields) {
+				pool.query(sqlstr, function(err, result, fields) {
 				    if (err) handleError(err);
-				    	
-					var recordset = rows;
-					//console.log("rows",rows);
-					//console.log("rows.length",rows.length);
-					//console.log("rows.uniqid",rows.uniqid);
-					//console.log("rows[0]",rows[0]);
-					if(recordset.length==0){
-			        	message.channel.send("野王編號錯誤，【"+bossid+"】 不存在!!, 請重新輸入!!");
-			        }else{
-			        	uniqid = recordset[0].uniqid;
-			        }
+				        	
+					Object.keys(result).forEach(function(key) {
+				      var row = result[key];
+				      uniqid = row.uniqid;
+				    });
 				});
 
 				if(uniqid!=""){
