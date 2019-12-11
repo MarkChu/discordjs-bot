@@ -303,7 +303,7 @@ client.on('message', message => {
 					}
 				}
 			
-				getBoss(bossid).then(x){
+				getBoss(bossid).then(x => {
 
 					if(x.status=="0000"){
 
@@ -332,7 +332,7 @@ client.on('message', message => {
 						message.channel.send("野王編號錯誤，【"+bossid+"】 不存在!!, 請重新輸入!!");
 					}
 
-				};
+				});
 
 				/*
 				var sqlstr = "select uniqid ";			    
