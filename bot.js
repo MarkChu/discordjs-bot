@@ -15,7 +15,8 @@ var pool  = mysql.createPool({
   host            : process.env.DB_SERVER,
   user            : process.env.DB_USER,
   password        : process.env.DB_PASSWORD,
-  database        : process.env.DB_NAME
+  database        : process.env.DB_NAME,
+  timezone:"+08:00"
 });
 
 
@@ -36,10 +37,31 @@ client.once('ready', () => {
 	  listboss();
 	});
 	//console.log('Ready!');
+	sqltest();
 });
 
 // login to Discord with your app's token
 client.login(token);
+
+
+
+function sqltest(){
+
+	var sqlstr = "select now() as today; ";			    
+
+	pool.query(sqlstr, function(err, rows, fields) {
+		if (err) handleError(err);
+	    
+		var recordset = rows;
+		var msgcontent = "";
+		for(i=0;i<recordset.length;i++)
+		{
+			var row = recordset[i];
+			console.log(row.today);
+		}
+	});
+
+}
 
 
 
