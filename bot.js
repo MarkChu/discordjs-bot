@@ -38,6 +38,7 @@ client.once('ready', () => {
 	});
 	//console.log('Ready!');
 	sqltest();
+
 });
 
 // login to Discord with your app's token
@@ -46,6 +47,10 @@ client.login(token);
 
 
 function sqltest(){
+
+	var tz = process.env.TZ;
+	var date = new Date();
+	console.log(tz, '||', date);
 
 	var sqlstr = "select convert(now(),DATETIME) as today; ";			    
 
