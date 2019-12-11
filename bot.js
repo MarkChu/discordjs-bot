@@ -45,33 +45,6 @@ client.once('ready', () => {
 client.login(token);
 
 
-async function getBlogPost(id) {
-  const result = await pool.query('SELECT * from posts WHERE id = ?', [id]); 
-  if (!result[0].length < 1) {
-    throw new Error('Post with this id was not found');
-  }
-  return result[0][0];
-
-}
-
-
-
-async function getBoss(uniqid) {
-	const rtn = { 
-		status:"0000",
-		status_desc:"",
-		data:null 
-	};
-	const result = await pool.query('SELECT * FROM tblboss WHERE uniqid = ?', [uniqid]); 
-	if (!result[0].length < 1) {
-    	rtn.status = "9999";
-  	}else{
-  		rtn.data = result[0];
-  	}
- 	return rtn;
-}
-
-
 function checkboss(){
 
 	var sqlstr = "select bossid,imgurl ";			    
@@ -303,12 +276,19 @@ client.on('message', message => {
 					}
 				}
 			
-				getBoss(bossid).then(x => {
+				var sqlstr = "select uniqid ";			    
+					sqlstr += "from tblboss ";
+					sqlstr += "where bossid='"+bossid+"'";
+				
+				pool.query(sqlstr, function(err, result, fields) {
+				    if (err) handleError(err);
 
-					if(x.status=="0000"){
+					Object.keys(result).forEach(function(key) {
+				      	var row = result[key];
+				      	uniqid = row.uniqid;
 
-						uniqid = x.data[0].uniqid;
-						var	update_sql = "";
+
+				        var	update_sql = "";
 						var q_kill = "";
 						var q_reborn = "";
 
@@ -328,52 +308,10 @@ client.on('message', message => {
 						  if (error) handleError(error);
 						  message.channel.send("野王編號 【"+bossid+"】 下次重生時間已更新!!");
 						})
-					}else{
-						message.channel.send("野王編號錯誤，【"+bossid+"】 不存在!!, 請重新輸入!!");
-					}
 
-				});
-
-				/*
-				var sqlstr = "select uniqid ";			    
-					sqlstr += "from tblboss ";
-					sqlstr += "where bossid='"+bossid+"'";
-				
-				pool.query(sqlstr, function(err, result, fields) {
-				    if (err) handleError(err);
-
-					Object.keys(result).forEach(function(key) {
-				      var row = result[key];
-				      uniqid = row.uniqid;
 				    });
 				});
 
-				if(uniqid!=""){
-
-					var	update_sql = "";
-					var q_kill = "";
-					var q_reborn = "";
-
-		        	if(killtime==""){
-
-		        		q_kill = mysql.raw("DATE_ADD(NOW(),INTERVAL 477 MINUTE)");
-						q_reborn = mysql.raw("DATE_ADD(DATE_ADD(NOW(),INTERVAL 477 MINUTE),INTERVAL cycletime*60 MINUTE)");
-
-		        	}else{
-		        		q_kill = mysql.raw("'"+killtime+"'");
-						q_reborn = mysql.raw("DATE_ADD('"+killtime+"',INTERVAL cycletime*60 MINUTE)");
-		        	}
-
-					var update_sql = mysql.format('UPDATE tblboss SET killtime = ? ,reborntime = ? WHERE uniqid= ? ', [q_kill, q_reborn , parseInt(uniqid) ]);
-
-					pool.query(update_sql, function (error, results, fields) {
-					  if (error) handleError(error);
-					  message.channel.send("野王編號 【"+bossid+"】 下次重生時間已更新!!");
-					})
-				}else{
-					message.channel.send("野王編號錯誤，【"+bossid+"】 不存在!!, 請重新輸入!!");
-				}	
-				*/
 			}
 			
 
