@@ -217,29 +217,24 @@ client.on('message', message => {
 				
 				pool.query(sqlstr, function(err, rows, fields) {
 				    if (err) handleError(err);
+
+
+					Object.keys(result).forEach(function(key) {
+				      	var row = result[key];
+				      	uniqid = row.uniqid;
+
+						var q_kill = mysql.raw("NULL");
+						var q_reborn = mysql.raw("NULL");
+						var update_sql = mysql.format('UPDATE tblboss SET killtime = ? ,reborntime = ? WHERE uniqid= ? ', [q_kill, q_reborn , parseInt(uniqid) ]);
+
+						pool.query(update_sql, function (error, results, fields) {
+						  if (error) handleError(error);
+						  message.channel.send("野王編號 【"+bossid+"】 已清空!!");
+						})
+				    });  	
 				    	
-					var recordset = rows;
 
-					if(recordset.length==0){
-			        	message.channel.send("野王編號錯誤，【"+bossid+"】 不存在!!, 請重新輸入!!");
-			        }else{
-			        	uniqid = recordset[0].uniqid;
-			        }
 				});
-
-				if(uniqid!=""){
-
-					var q_kill = mysql.raw("NULL");
-					var q_reborn = mysql.raw("NULL");
-					var update_sql = mysql.format('UPDATE tblboss SET killtime = ? ,reborntime = ? WHERE uniqid= ? ', [q_kill, q_reborn , parseInt(uniqid) ]);
-
-					pool.query(update_sql, function (error, results, fields) {
-					  if (error) handleError(error);
-					  message.channel.send("野王編號 【"+bossid+"】 已清空!!");
-					})
-				}else{
-					message.channel.send("野王編號錯誤，【"+bossid+"】 不存在!!, 請重新輸入!!");
-				}
 
 			}
 			
