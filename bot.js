@@ -49,7 +49,6 @@ function checkboss(){
 		sqlstr += "and TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime )  in (0 ,5 ,10) ";
 		sqlstr += "order by 4 ";	
 
-	connection.connect();
 	connection.query(sqlstr, function(err, rows, fields) {
 	    if (err){
 	    	console.log(sqlstr , err);	
@@ -87,7 +86,6 @@ function checkboss(){
 	    } 
 
 	});
-	connection.end();
 
 }
 
@@ -103,7 +101,6 @@ function listboss(){
 		sqlstr += "where reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
 		sqlstr += "order by bossid ";	
 
-	connection.connect();
 	connection.query(sqlstr, function(err, rows, fields) {
 	    if (err){
 	    	console.log(sqlstr , err);	
@@ -123,7 +120,7 @@ function listboss(){
 	    } 
 
 	});
-	connection.end();
+
 }
 
 
