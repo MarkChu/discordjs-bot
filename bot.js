@@ -9,8 +9,6 @@ const webhook = require("webhook-discord");
 const Hook = new webhook.Webhook("https://discordapp.com/api/webhooks/653966367535398912/ABIrRHZq4yq43P4Tcsj3fMBhTZ_cbSfSXYBF2TXaRWF29l5frbb5ICMHq6lDlAO92G9A");
 
 const mysql = require('mysql');
-const connection = mysql.createConnection(jawsdb);
-
 
 // create a new Discord client
 const client = new Discord.Client();
@@ -37,7 +35,7 @@ client.login(token);
 
 
 function checkboss(){
-
+	var connection = mysql.createConnection(jawsdb);
 
 	var sqlstr = "select bossid,imgurl ";			    
 		sqlstr += ",left(convert(killtime,DATETIME),16) as killed ";
@@ -50,40 +48,39 @@ function checkboss(){
 		sqlstr += "order by 4 ";	
 
 	connection.query(sqlstr, function(err, rows, fields) {
-	    if (err){
-	    	console.log(sqlstr , err);	
-	    }else{
-			var recordset = rows;
-			var msgcontent = "";
-			for(i=0;i<recordset.length;i++)
-			{
+		if (err) throw err;
+	    
+		var recordset = rows;
+		var msgcontent = "";
+		for(i=0;i<recordset.length;i++)
+		{
 
-				var row = recordset[i];
-	        	var msgcontent = "野王出沒通知：【" + row.bossid + "】";
-	        	//console.log(row);
-	        	if(parseInt(row.dues)==0){
-	        		msgcontent += " 目前已經重生，趕快去吃王吧!!";
-	        	}else{
-	        		msgcontent += " 距離出現還有 " + row.dues + "分鐘!!";
-	        	}
+			var row = recordset[i];
+        	var msgcontent = "野王出沒通知：【" + row.bossid + "】";
+        	//console.log(row);
+        	if(parseInt(row.dues)==0){
+        		msgcontent += " 目前已經重生，趕快去吃王吧!!";
+        	}else{
+        		msgcontent += " 距離出現還有 " + row.dues + "分鐘!!";
+        	}
 
-	        	const msg = new webhook.MessageBuilder()
-                .setName("小馬怪")
-                .setColor("#ff0000")
-                .setText(msgcontent)
-                .addField("野王編號", row.bossid )
-                .addField("預計出現時間", row.reborn )
-                .addField("重生時間", row.cycletime + " 小時")
-                .setImage(row.imgurl)
-                .setTime();
+        	const msg = new webhook.MessageBuilder()
+            .setName("小馬怪")
+            .setColor("#ff0000")
+            .setText(msgcontent)
+            .addField("野王編號", row.bossid )
+            .addField("預計出現時間", row.reborn )
+            .addField("重生時間", row.cycletime + " 小時")
+            .setImage(row.imgurl)
+            .setTime();
 
-				Hook.send(msg);
-				
-				//message.channel.send(msgcontent);						
-			}
-			//Hook.info("小馬怪",msgcontent);
-			//console.log(msgcontent);
-	    } 
+			Hook.send(msg);
+			
+			//message.channel.send(msgcontent);						
+		}
+		//Hook.info("小馬怪",msgcontent);
+		//console.log(msgcontent);
+    
 
 	});
 
@@ -91,6 +88,7 @@ function checkboss(){
 
 
 function listboss(){
+
 
 	var sqlstr = "select bossid,imgurl ";			    
 		sqlstr += ",left(convert(killtime,DATETIME),16) as killed ";
@@ -101,23 +99,22 @@ function listboss(){
 		sqlstr += "where reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
 		sqlstr += "order by bossid ";	
 
+	var connection = mysql.createConnection(jawsdb);
 	connection.query(sqlstr, function(err, rows, fields) {
-	    if (err){
-	    	console.log(sqlstr , err);	
-	    }else{
-			var recordset = rows;
-			var msgcontent = "";
-			for(i=0;i<recordset.length;i++)
-			{
+	    if (err) throw err;
+	    	
+		var recordset = rows;
+		var msgcontent = "";
+		for(i=0;i<recordset.length;i++)
+		{
 
-				var row = recordset[i];
-				msgcontent += "【" + row.bossid + " - 預計時間:"+row.reborn+" - 距離現在："+ row.dues +"分鐘】\n";
-				
-				//message.channel.send(msgcontent);						
-			}
-			Hook.info("小馬怪",msgcontent);
-			//console.log(msgcontent);
-	    } 
+			var row = recordset[i];
+			msgcontent += "【" + row.bossid + " - 預計時間:"+row.reborn+" - 距離現在："+ row.dues +"分鐘】\n";
+			
+			//message.channel.send(msgcontent);						
+		}
+		Hook.info("小馬怪",msgcontent);
+		//console.log(msgcontent);
 
 	});
 
