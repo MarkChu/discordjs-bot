@@ -16,7 +16,7 @@ var pool  = mysql.createPool({
   user            : process.env.DB_USER,
   password        : process.env.DB_PASSWORD,
   database        : process.env.DB_NAME
-  ,timezone:"+16:00"
+  ,timezone:"+08:00"
 });
 
 
@@ -47,7 +47,7 @@ client.login(token);
 
 function sqltest(){
 
-	var sqlstr = "select now() as today; ";			    
+	var sqlstr = "select convert(now(),DATETIME) as today; ";			    
 
 	pool.query(sqlstr, function(err, rows, fields) {
 		if (err) handleError(err);
