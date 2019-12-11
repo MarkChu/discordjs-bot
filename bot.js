@@ -8,20 +8,18 @@ const schedule = require('node-schedule');
 const webhook = require("webhook-discord");
 const Hook = new webhook.Webhook("https://discordapp.com/api/webhooks/653966367535398912/ABIrRHZq4yq43P4Tcsj3fMBhTZ_cbSfSXYBF2TXaRWF29l5frbb5ICMHq6lDlAO92G9A");
 
-var mysql = require('mysql');
+const mysql = require('mysql2/promise');
 
-
-var pool  = mysql.createPool({
-  connectionLimit : 10,
+const pool = mysql.createPool({
   host            : process.env.DB_SERVER,
   user            : process.env.DB_USER,
   password        : process.env.DB_PASSWORD,
   database        : process.env.DB_NAME,
-  timezone		  : '+00:00'
+  timezone		  : '+00:00',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
-
-const { query } = require('./async-db');
-
 
 
 // create a new Discord client
@@ -47,12 +45,32 @@ client.once('ready', () => {
 client.login(token);
 
 
+async function getBlogPost(id) {
+  const result = await pool.query('SELECT * from posts WHERE id = ?', [id]); 
+  if (!result[0].length < 1) {
+    throw new Error('Post with this id was not found');
+  }
+  return result[0][0];
+
+}
+
+
 
 async function getBoss(uniqid) {
-  let sql = mysql.format("SELECT * FROM tblboss WHERE uniqid = ?", [ uniqid ] );
-  let rtn = await query( sql )
-  return rtn
+	const rtn = { 
+		status:"0000",
+		status_desc:"",
+		data:null 
+	};
+	const result = await pool.query('SELECT * FROM tblboss WHERE uniqid = ?', [uniqid]); 
+	if (!result[0].length < 1) {
+    	rtn.status = "9999";
+  	}else{
+  		rtn.data = result[0];
+  	}
+ 	return rtn;
 }
+
 
 function checkboss(){
 
@@ -287,7 +305,7 @@ client.on('message', message => {
 			
 				var boss = getBoss(bossid);
 				console.log("boss",boss);
-				
+
 				var sqlstr = "select uniqid ";			    
 					sqlstr += "from tblboss ";
 					sqlstr += "where bossid='"+bossid+"'";
