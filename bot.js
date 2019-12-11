@@ -8,7 +8,16 @@ const schedule = require('node-schedule');
 const webhook = require("webhook-discord");
 const Hook = new webhook.Webhook("https://discordapp.com/api/webhooks/653966367535398912/ABIrRHZq4yq43P4Tcsj3fMBhTZ_cbSfSXYBF2TXaRWF29l5frbb5ICMHq6lDlAO92G9A");
 
-const mysql = require('mysql');
+var mysql = require('mysql');
+
+var pool  = mysql.createPool({
+  connectionLimit : 10,
+  host            : process.env.DB_SERVER,
+  user            : process.env.DB_USER,
+  password        : process.env.DB_PASSWORD,
+  database        : process.env.DB_NAME
+});
+
 
 // create a new Discord client
 const client = new Discord.Client();
@@ -35,7 +44,6 @@ client.login(token);
 
 
 function checkboss(){
-	var connection = mysql.createConnection(jawsdb);
 
 	var sqlstr = "select bossid,imgurl ";			    
 		sqlstr += ",left(convert(killtime,DATETIME),16) as killed ";
@@ -47,8 +55,8 @@ function checkboss(){
 		sqlstr += "and TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime )  in (0 ,5 ,10) ";
 		sqlstr += "order by 4 ";	
 
-	connection.query(sqlstr, function(err, rows, fields) {
-		if (err) throw err;
+	pool.query(sqlstr, function(err, rows, fields) {
+		if (err) handleError(err);
 	    
 		var recordset = rows;
 		var msgcontent = "";
@@ -99,9 +107,8 @@ function listboss(){
 		sqlstr += "where reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
 		sqlstr += "order by bossid ";	
 
-	var connection = mysql.createConnection(jawsdb);
-	connection.query(sqlstr, function(err, rows, fields) {
-	    if (err) throw err;
+	pool.query(sqlstr, function(err, rows, fields) {
+	    if (err) handleError(err);
 	    	
 		var recordset = rows;
 		var msgcontent = "";
@@ -121,7 +128,7 @@ function listboss(){
 }
 
 
-/*
+
 
 client.on('message', message => {
 
@@ -382,4 +389,7 @@ client.on('message', message => {
 
 });
 
-*/
+
+function handleError (error) {
+	console.log(error);
+}
