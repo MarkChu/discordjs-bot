@@ -215,7 +215,7 @@ client.on('message', message => {
 					sqlstr += "from tblboss ";
 					sqlstr += "where bossid='"+bossid+"'";
 				
-				pool.query(sqlstr, function(err, rows, fields) {
+				pool.query(sqlstr, function(err, result, fields) {
 				    if (err) handleError(err);
 
 
