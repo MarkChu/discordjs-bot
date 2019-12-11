@@ -6,6 +6,5 @@
 	"secret_passcodes": {
 		"bank": 1234,
 		"home": 4321
-	},
-	"firebase_url":"https://discordbot-lineage2m.firebaseio.com/"
+	}
 }
