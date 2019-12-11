@@ -20,6 +20,9 @@ var pool  = mysql.createPool({
   timezone		  : '+00:00'
 });
 
+const { query } = require('./async-db');
+
+
 
 // create a new Discord client
 const client = new Discord.Client();
@@ -44,6 +47,12 @@ client.once('ready', () => {
 client.login(token);
 
 
+
+async function getBoss(uniqid) {
+  let sql = mysql.format("SELECT * FROM tblboss WHERE uniqid = ?", [ uniqid ] );
+  let rtn = await query( sql )
+  return rtn
+}
 
 function checkboss(){
 
@@ -276,13 +285,16 @@ client.on('message', message => {
 					}
 				}
 			
+				var boss = getBoss(bossid);
+				console.log("boss",boss);
+				
 				var sqlstr = "select uniqid ";			    
 					sqlstr += "from tblboss ";
 					sqlstr += "where bossid='"+bossid+"'";
 				
 				pool.query(sqlstr, function(err, result, fields) {
 				    if (err) handleError(err);
-				        	
+
 					Object.keys(result).forEach(function(key) {
 				      var row = result[key];
 				      uniqid = row.uniqid;
