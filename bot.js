@@ -34,7 +34,7 @@ client.once('ready', () => {
 	  //每到0秒時執行一次(每分鐘)
 	  checkboss();
 	});
-	var j1 = schedule.scheduleJob('* 0 * * * *', function(){
+	var j1 = schedule.scheduleJob('0 0 * * * *', function(){
 	  //每到0分時執行一次(每小時)
 	  listboss();
 	});
