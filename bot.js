@@ -107,7 +107,7 @@ function listboss(){
 		sqlstr += ",cycletime ";
 		sqlstr += "from tblboss ";
 		sqlstr += "where reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
-		sqlstr += "order by bossid ";	
+		sqlstr += "order by 4 ";	
 
 	pool.query(sqlstr, function(err, rows, fields) {
 	    if (err) handleError(err);
@@ -324,7 +324,7 @@ client.on('message', message => {
 				sqlstr += ",cycletime ";
 				sqlstr += "from tblboss ";
 				sqlstr += "where reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
-				sqlstr += "order by bossid ";	
+				sqlstr += "order by 4 ";	
 
 			pool.query(sqlstr, function(err, rows, fields) {
 			    if (err) handleError(err);
