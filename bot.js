@@ -160,6 +160,11 @@ client.on('message', message => {
 			message.channel.send(exampleEmbed);
 			break;
 
+		case 'user':
+			message.channel.send(message.author.id);
+			message.channel.send(client.user.id);
+			break;
+
 		case 'maintain':
 			if (!args.length) {
 				message.channel.send("參數輸入錯誤, "+message.author+"!");
