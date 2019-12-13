@@ -145,6 +145,7 @@ client.on('message', message => {
 	const command = args.shift().toLowerCase();
 	const clientid = client.user.id;
 	const authorid = message.author.id;
+	const authorname = message.author.username;
 
 	//console.log(message.content);
 
@@ -168,6 +169,7 @@ client.on('message', message => {
 
 			var q_userid = mysql.raw("'"+clientid+"'");
 			var q_authorid = mysql.raw("'"+authorid+"'");
+			var q_authorname = mysql.raw("'"+authorname+"'");
 
 
 			var sqlstr = "select uniqid,left(convert(limitdate,DATETIME),16) as limitdate ";			    
@@ -180,22 +182,29 @@ client.on('message', message => {
 			pool.query(sqlstr, function(err, result, fields) {
 			    if (err) handleError(err);
 
-			    console.log(result);
-			    Object.keys(result).forEach(function(key) {
-			    	var row = result[key];
-			    	message.channel.send(message.author+",您已經註冊過了喔!!目前有效期間至 "+row.limitdate+"。" );
-			    });  	
+			    if(result.length>0){
+				    Object.keys(result).forEach(function(key) {
+				    	var row = result[key];
+				    	message.channel.send( authorname +" ,您已經註冊過了喔!!目前有效期間至 "+row.limitdate+"。" );
+				    });  	
+			    }else{
+
+					var q_regdate = mysql.raw("DATE_ADD( NOW() , INTERVAL 8 HOUR )");
+					var q_limitdate = mysql.raw("DATE_ADD( NOW() , INTERVAL 3 MONTH )");
+					var insert_sql = mysql.format('INSERT INTO tblUser (userid,authorid,authorname,regdate,limitdate) values ( ? , ? , ? , ? , ? );', [q_userid, q_authorid , q_authorname ,q_regdate ,q_limitdate ]);
+
+					pool.query(update_sql, function (error, results, fields) {
+					  if (error) handleError(error);
+					  message.channel.send(authorname +" ,使用者註冊成功!!");
+					})
+
+			    }
 			    	
 
 			});
 
 
 
-			var q_userid = mysql.raw("'"+clientid+"'");
-			var q_authorid = mysql.raw("'"+authorid+"'");
-			var q_regdate = mysql.raw("DATE_ADD( NOW() , INTERVAL 8 HOUR )");
-			var q_limitdate = mysql.raw("DATE_ADD( NOW() , INTERVAL 3 MONTH )");
-			var insert_sql = mysql.format('INSERT INTO tblUser (userid,authorid,regdate,limitdate) values ( ? , ? , ? , ? );', [q_userid, q_authorid ,q_regdate ,q_limitdate ]);
 
 
 
