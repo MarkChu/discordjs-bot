@@ -180,7 +180,7 @@ client.on('message', message => {
 			pool.query(sqlstr, function(err, result, fields) {
 			    if (err) handleError(err);
 
-			    consle.log(result);
+			    console.log(result);
 			    Object.keys(result).forEach(function(key) {
 			    	var row = result[key];
 			    	message.channel.send(message.author+",您已經註冊過了喔!!目前有效期間至 "+row.limitdate+"。" );
