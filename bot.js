@@ -136,11 +136,15 @@ function listboss(){
 
 client.on('message', message => {
 
+			
+
+
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
 
 	const args = message.content.slice(prefix.length).split(' ');
 	const command = args.shift().toLowerCase();
-
+	const clientid = client.user.id;
+	const authorid = message.author.id;
 
 	//console.log(message.content);
 
@@ -160,9 +164,42 @@ client.on('message', message => {
 			message.channel.send(exampleEmbed);
 			break;
 
-		case 'user':
-			message.channel.send(message.author.id);
-			message.channel.send(client.user.id);
+		case 'register':
+
+			var q_userid = mysql.raw("'"+clientid+"'");
+			var q_authorid = mysql.raw("'"+authorid+"'");
+
+
+			var sqlstr = "select uniqid,left(convert(limitdate,DATETIME),16) as limitdate ";			    
+				sqlstr += "from tblUser ";
+				sqlstr += "where userid= ? ";
+
+			sqlstr = mysql.format(sqlstr, [ q_userid ] );
+
+
+			pool.query(sqlstr, function(err, result, fields) {
+			    if (err) handleError(err);
+
+			    consle.log(result);
+			    Object.keys(result).forEach(function(key) {
+			    	var row = result[key];
+			    	message.channel.send(message.author+",您已經註冊過了喔!!目前有效期間至 "+row.limitdate+"。" );
+			    });  	
+			    	
+
+			});
+
+
+
+			var q_userid = mysql.raw("'"+clientid+"'");
+			var q_authorid = mysql.raw("'"+authorid+"'");
+			var q_regdate = mysql.raw("DATE_ADD( NOW() , INTERVAL 8 HOUR )");
+			var q_limitdate = mysql.raw("DATE_ADD( NOW() , INTERVAL 3 MONTH )");
+			var insert_sql = mysql.format('INSERT INTO tblUser (userid,authorid,regdate,limitdate) values ( ? , ? , ? , ? );', [q_userid, q_authorid ,q_regdate ,q_limitdate ]);
+
+
+
+
 			break;
 
 		case 'maintain':
