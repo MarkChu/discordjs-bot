@@ -155,6 +155,7 @@ client.on('message', message => {
 			const exampleEmbed = new Discord.RichEmbed()
 			.setColor("#0099ff")
 			.setTitle("指令說明："+prefix+"help")
+			.addField(prefix+"register", '第一次註冊開始使用。')
 			.addField(prefix+"boss", '列出目前有紀錄的BOSS重生時間。')
 			.addField(prefix+"kill 野王編號", '更新擊殺野王的時間，會使用系統時間-3分鐘 。')
 			.addField(prefix+"kill 野王編號 日期時間", '更新擊殺野王的時間，時間輸入範例如: 2019/12/10 11:50 轉換成 201912101150 。')
