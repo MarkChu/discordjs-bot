@@ -193,7 +193,7 @@ client.on('message', message => {
 					var q_limitdate = mysql.raw("DATE_ADD( NOW() , INTERVAL 3 MONTH )");
 					var insert_sql = mysql.format('INSERT INTO tblUser (userid,authorid,authorname,regdate,limitdate) values ( ? , ? , ? , ? , ? );', [q_userid, q_authorid , q_authorname ,q_regdate ,q_limitdate ]);
 
-					pool.query(update_sql, function (error, results, fields) {
+					pool.query(insert_sql, function (error, results, fields) {
 					  if (error) handleError(error);
 					  message.channel.send(authorname +" ,使用者註冊成功!!");
 					})
