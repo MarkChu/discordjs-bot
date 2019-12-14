@@ -403,7 +403,7 @@ client.on('message', message => {
 				{
 
 					var row = recordset[i];
-					msgcontent += "【" + row.bossid + " - 前次擊殺時間:"+row.killed+" - 重生間格："+ row.dues +"小時 - 預計出現時間:"+row.reborn+" 】\n";
+					msgcontent += "【" + row.bossid + " - 前次擊殺時間:"+(row.killed == null ? "":row.killed) + " - 重生間格："+ row.cycletime +"小時 - 預計出現時間:"+(row.reborn == null ? "":row.reborn) +" 】\n";
 					
 					//message.channel.send(msgcontent);						
 				}
