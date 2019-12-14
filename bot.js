@@ -74,10 +74,11 @@ function checkboss(){
         		msgcontent += " 距離出現還有 " + row.dues + "分鐘!!";
         	}
 
+        	const msg = new webhook.MessageBuilder();
+
 			if(row.imgurl!=null&&row.imgurl!=""){
 
-	        	const msg = new webhook.MessageBuilder()
-	            .setName("小馬怪")
+	        	msg.setName("小馬怪")
 	            .setColor("#ff0000")
 	            .setText(msgcontent)
 	            .addField("野王編號", row.bossid )
@@ -88,8 +89,7 @@ function checkboss(){
 
 			}else{
 
-	        	const msg = new webhook.MessageBuilder()
-	            .setName("小馬怪")
+	        	msg.setName("小馬怪")
 	            .setColor("#ff0000")
 	            .setText(msgcontent)
 	            .addField("野王編號", row.bossid )
@@ -403,7 +403,7 @@ client.on('message', message => {
 				{
 
 					var row = recordset[i];
-					msgcontent += "【" + row.bossid + " - 前次擊殺時間:"+(row.killed == null ? "":row.killed) + " - 重生間格："+ row.cycletime +"小時 - 預計出現時間:"+(row.reborn == null ? "":row.reborn) +" 】\n";
+					msgcontent += "【野王編號： " + row.bossid + " - 前次擊殺時間： "+(row.killed == null ? "無":row.killed) + " - 重生間格："+ row.cycletime +"小時 - 預計出現時間： "+(row.reborn == null ? "無":row.reborn) +" 】\n";
 					
 					//message.channel.send(msgcontent);						
 				}
