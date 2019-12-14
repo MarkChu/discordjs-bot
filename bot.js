@@ -408,7 +408,9 @@ client.on('message', message => {
 					//message.channel.send(msgcontent);						
 				}
 				if(msgcontent!=""){
-					Hook.info("小馬怪",msgcontent);	
+					message.channel.send(msgcontent);	
+				}else{
+					message.channel.send("目前沒有記錄喔!!");	
 				}
 				//console.log(msgcontent);
 
