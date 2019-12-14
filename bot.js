@@ -74,15 +74,30 @@ function checkboss(){
         		msgcontent += " 距離出現還有 " + row.dues + "分鐘!!";
         	}
 
-        	const msg = new webhook.MessageBuilder()
-            .setName("小馬怪")
-            .setColor("#ff0000")
-            .setText(msgcontent)
-            .addField("野王編號", row.bossid )
-            .addField("預計出現時間", row.reborn )
-            .addField("重生時間", row.cycletime + " 小時")
-            .setImage(row.imgurl)
-            .setTime();
+			if(row.imgurl!=null&&row.imgurl!=""){
+
+	        	const msg = new webhook.MessageBuilder()
+	            .setName("小馬怪")
+	            .setColor("#ff0000")
+	            .setText(msgcontent)
+	            .addField("野王編號", row.bossid )
+	            .addField("預計出現時間", row.reborn )
+	            .addField("重生時間", row.cycletime + " 小時")
+	            .setImage(row.imgurl)
+	            .setTime();
+
+			}else{
+
+	        	const msg = new webhook.MessageBuilder()
+	            .setName("小馬怪")
+	            .setColor("#ff0000")
+	            .setText(msgcontent)
+	            .addField("野王編號", row.bossid )
+	            .addField("預計出現時間", row.reborn )
+	            .addField("重生時間", row.cycletime + " 小時")
+	            .setTime();
+
+			}        	
 
 			Hook.send(msg);
 			
@@ -157,6 +172,7 @@ client.on('message', message => {
 			.setTitle("指令說明："+prefix+"help")
 			.addField(prefix+"register", '第一次註冊開始使用。')
 			.addField(prefix+"boss", '列出目前有紀錄的BOSS重生時間。')
+			.addField(prefix+"bossall", '列出目前建檔的BOSS。')
 			.addField(prefix+"kill 野王編號", '更新擊殺野王的時間，會使用系統時間-3分鐘 。')
 			.addField(prefix+"kill 野王編號 日期時間", '更新擊殺野王的時間，時間輸入範例如: 2019/12/10 11:50 轉換成 201912101150 。')
 			.addField(prefix+"reset 野王編號", '清空特定野王的擊殺時間與重生時間。')
@@ -366,6 +382,41 @@ client.on('message', message => {
 
 
 			break;
+
+		case 'bossall':
+
+
+			var sqlstr = "select bossid,imgurl ";			    
+				sqlstr += ",left(convert(killtime,DATETIME),16) as killed ";
+				sqlstr += ",left(convert(reborntime,DATETIME),16) as reborn ";
+				sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
+				sqlstr += ",cycletime ";
+				sqlstr += "from tblboss ";
+				sqlstr += "order by 1 ";	
+
+			pool.query(sqlstr, function(err, rows, fields) {
+			    if (err) handleError(err);
+			    	
+				var recordset = rows;
+				var msgcontent = "";
+				for(i=0;i<recordset.length;i++)
+				{
+
+					var row = recordset[i];
+					msgcontent += "【" + row.bossid + " - 前次擊殺時間:"+row.killed+" - 重生間格："+ row.dues +"小時 - 預計出現時間:"+row.reborn+" 】\n";
+					
+					//message.channel.send(msgcontent);						
+				}
+				if(msgcontent!=""){
+					Hook.info("小馬怪",msgcontent);	
+				}
+				//console.log(msgcontent);
+
+			});
+
+			//message.channel.send('test!');
+			break;
+
 		case 'boss':
 
 
