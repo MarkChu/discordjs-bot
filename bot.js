@@ -285,11 +285,12 @@ client.on('message', message => {
 				
 				pool.query(sqlstr, function(err, result, fields) {
 				    if (err) handleError(err);
-
+				    var isNotExist = true;
 
 					Object.keys(result).forEach(function(key) {
 				      	var row = result[key];
 				      	uniqid = row.uniqid;
+				      	isNotExist = false;
 
 						var q_kill = mysql.raw("NULL");
 						var q_reborn = mysql.raw("NULL");
@@ -300,7 +301,9 @@ client.on('message', message => {
 						  message.channel.send("野王編號 【"+bossid+"】 已清空!!");
 						})
 				    });  	
-				    	
+				    if(isNotExist){
+				    	message.channel.send("野王編號 【"+bossid+"】 此編號不存在。請重新輸入!!");
+				    }				    	
 
 				});
 
@@ -345,11 +348,11 @@ client.on('message', message => {
 				
 				pool.query(sqlstr, function(err, result, fields) {
 				    if (err) handleError(err);
-
+				    var isNotExist = true;
 					Object.keys(result).forEach(function(key) {
 				      	var row = result[key];
 				      	uniqid = row.uniqid;
-
+				      	isNotExist = false;
 
 				        var	update_sql = "";
 						var q_kill = "";
@@ -373,6 +376,9 @@ client.on('message', message => {
 						})
 
 				    });
+				    if(isNotExist){
+				    	message.channel.send("野王編號 【"+bossid+"】 此編號不存在。請重新輸入!!");
+				    }
 				});
 
 			}
