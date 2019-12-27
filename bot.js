@@ -46,7 +46,7 @@ client.once('ready', () => {
 	});
 
 
-
+	/*
 	Promise.race([
 	  getuser('85747967906054144'),
 	  timeoutPromise(3000)
@@ -59,7 +59,7 @@ client.once('ready', () => {
 	    // 可能是被拒絕或擱置超過 3 秒
 	  }
 	);
-
+	*/
 	
 	
 
@@ -323,15 +323,16 @@ client.on('message', message => {
 					}
 					//console.log(killtime);	
 				}
-		
-				var q_kill = mysql.raw("DATE_ADD('"+fixtime+"',INTERVAL 10 MINUTE )");
-				var q_reborn = mysql.raw("DATE_ADD('"+fixtime+"',INTERVAL cycletime*60+10 MINUTE )");
 
-				var update_sql = mysql.format('UPDATE tblboss SET killtime = ? ,reborntime = ? ', [q_kill, q_reborn]);
+				var q_userid = mysql.raw("'"+authorid+"'");
+				var q_kill = mysql.raw("DATE_ADD('"+fixtime+"',INTERVAL 10 MINUTE )");
+				var q_reborn = mysql.raw("DATE_ADD('"+fixtime+"',INTERVAL (select cycletime FROM tblboss z WHERE z.bossid=tblUserBoss.bossid)*60+10 MINUTE )");
+
+				var update_sql = mysql.format('UPDATE tblUserBoss SET killtime = ? ,reborntime = ? WHERE userid= ? ', [q_kill, q_reborn , q_userid ]);
 
 				pool.query(update_sql, function (error, results, fields) {
 				  if (error) handleError(error);
-				  message.author.send("野王重生時間已全部重置!!");
+				  message.author.send(message.author+",野王重生時間已全部重置!!");
 				})
 
 			}
@@ -366,17 +367,19 @@ client.on('message', message => {
 				      	uniqid = row.uniqid;
 				      	isNotExist = false;
 
+				 		var q_userid = mysql.raw("'"+authorid+"'");
+				        var q_bossid = mysql.raw("'"+bossid+"'");
 						var q_kill = mysql.raw("NULL");
 						var q_reborn = mysql.raw("NULL");
-						var update_sql = mysql.format('UPDATE tblboss SET killtime = ? ,reborntime = ? WHERE uniqid= ? ', [q_kill, q_reborn , parseInt(uniqid) ]);
+						var update_sql = mysql.format('UPDATE tblUserBoss SET killtime = ? ,reborntime = ? WHERE userid= ? and bossid = ? ', [q_kill, q_reborn , q_userid , q_bossid ]);
 
 						pool.query(update_sql, function (error, results, fields) {
 						  if (error) handleError(error);
-						  message.author.send("野王編號 【"+bossid+"】 已清空!!");
+						  message.author.send(message.author+",野王編號 【"+bossid+"】 已清空!!");
 						})
 				    });  	
 				    if(isNotExist){
-				    	message.author.send("野王編號 【"+bossid+"】 此編號不存在。請重新輸入!!");
+				    	message.author.send(message.author+",野王編號 【"+bossid+"】 此編號不存在。請重新輸入!!");
 				    }				    	
 
 				});
@@ -468,12 +471,13 @@ client.on('message', message => {
 		case 'bossall':
 
 
-			var sqlstr = "select bossid,imgurl ";			    
+			var sqlstr = "select bossid ";			    
 				sqlstr += ",left(convert(killtime,DATETIME),16) as killed ";
 				sqlstr += ",left(convert(reborntime,DATETIME),16) as reborn ";
 				sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
-				sqlstr += ",cycletime ";
-				sqlstr += "from tblboss ";
+				sqlstr += ",(select cycletime FROM tblboss z WHERE z.bossid=a.bossid) cycletime ";
+				sqlstr += "from tblUserBoss a ";
+				sqlstr += "where userid = '"+authorid+"'";
 				sqlstr += "order by 1 ";	
 
 			pool.query(sqlstr, function(err, rows, fields) {
@@ -504,13 +508,14 @@ client.on('message', message => {
 		case 'boss':
 
 
-			var sqlstr = "select bossid,imgurl ";			    
+			var sqlstr = "select bossid ";			    
 				sqlstr += ",left(convert(killtime,DATETIME),16) as killed ";
 				sqlstr += ",left(convert(reborntime,DATETIME),16) as reborn ";
 				sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
-				sqlstr += ",cycletime ";
-				sqlstr += "from tblboss ";
-				sqlstr += "where reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
+				sqlstr += ",(select cycletime FROM tblboss z WHERE z.bossid=a.bossid) cycletime ";
+				sqlstr += "from tblUserBoss a ";
+				sqlstr += "where userid = '"+authorid+"'";
+				sqlstr += "and reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
 				sqlstr += "order by 4 ";	
 
 			pool.query(sqlstr, function(err, rows, fields) {
@@ -538,7 +543,7 @@ client.on('message', message => {
 			//message.author.send('test!');
 			break;
 		default:
-			message.author.send('您可以輸入 ^help 查看指令.');
+			message.channel.send('您可以輸入 ^help 查看指令.');
 			break;
 	}
 
