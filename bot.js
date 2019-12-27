@@ -45,6 +45,13 @@ client.once('ready', () => {
 	  listboss();
 	});
 
+
+	for (let [snowflake, guildMember] of mems) {
+	  console.log('snowflake: ' + snowflake);
+	  console.log('id: ' + guildMember.id);
+	  console.log('user id: ' + guildMember.user.id);
+	}
+
 });
 
 // login to Discord with your app's token
@@ -190,8 +197,8 @@ client.on('message', message => {
 
 		case 'test':
 
-			message.channel.createWebhook("Example Webhook", "https://i.imgur.com/AcRxjxQ.png")
-      		.then(webhook => webhook.edit("Example Webhook", "https://i.imgur.com/AcRxjxQ.png")
+			message.channel.createWebhook("Example Webhook", "https://i.imgur.com/X2IBVay.jpg")
+      		.then(webhook => webhook.edit("Example Webhook", "https://i.imgur.com/X2IBVay.jpg")
         	.then(wb => message.author.send('Here is your webhook https://canary.discordapp.com/api/webhooks/'+wb.id+'/'+wb.token))
         	.catch(console.error))
       		.catch(console.error);
