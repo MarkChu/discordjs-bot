@@ -182,11 +182,35 @@ client.on('message', message => {
 			message.channel.send(exampleEmbed);
 			break;
 
+		case 'test'
+
+			message.channel.createWebhook("Example Webhook", "https://i.imgur.com/AcRxjxQ.png")
+      		.then(webhook => webhook.edit("Example Webhook", "https://i.imgur.com/AcRxjxQ.png")
+        	.then(wb => message.author.send(`Here is your webhook https://canary.discordapp.com/api/webhooks/${wb.id}/${wb.token}`))
+        	.catch(console.error))
+      		.catch(console.error);
+
+
+			break;
+
 		case 'webhook':
-			checklogin(authorid).then(function(logstat){
-				if(logstat){
+			checklogin(authorid).then(function(login){
+				if(login){
+					if (!args.length) {
+						message.channel.send("參數輸入錯誤, "+message.author+"!");
+						message.channel.send("輸入方式如下：");
+						message.channel.send(prefix+"webhook webhook網址：設定伺服器提供的webhook網址。");
+					}else{
 
+						var webhook_url = args[0];
+						var q_webhook = mysql.raw("'"+webhook_url+"'");
+						var q_userid = mysql.raw("'"+authorid+"'");
+						var sql1 = mysql.format('UPDATE tblUser SET webhook = ? WHERE userid = ? ', [q_webhook, q_userid]);
+						exec_sql(sql1).then(function(rtn1){
+							message.channel.send("通知設定完成!!");
+						});
 
+					}
 
 
 				}else{
@@ -235,7 +259,7 @@ client.on('message', message => {
 					  		message.channel.send(authorname +" ,使用者註冊成功!!");
 					  	});
 					  });
-					  
+
 					})
 
 			    }
