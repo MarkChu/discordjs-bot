@@ -139,7 +139,7 @@ function checkboss(){
 			  }
 			);
 			
-			message.author.send(msg);						
+			//message.author.send(msg);						
 		}
 		//Hook.info("小馬怪",msgcontent);
 		//console.log(msgcontent);
