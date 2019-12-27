@@ -46,7 +46,7 @@ client.once('ready', () => {
 	});
 
 
-	getUsers('85747967906054144').then(function(user){
+	getuser('85747967906054144').then(function(user){
 		user.sendMessage('test');	
 	});
 	//user.sendMessage('test');
