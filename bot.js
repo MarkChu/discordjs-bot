@@ -65,7 +65,8 @@ function getUsers() {
         if(r.user.id === '85747967906054144'){
         	//var dm = r.user.dmChannel();
         	//r.user.dmChannel().sendMessage('test');
-        	console.log(r.user.dmChannel);
+        	//console.log(r.user.dmChannel);
+        	r.user.sendMessage('test');
         }
       });
     });
