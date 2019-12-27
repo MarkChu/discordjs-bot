@@ -64,7 +64,8 @@ function getUsers() {
         console.log(`${username}`);
         if(r.user.id === '653601639260749835'){
         	//var dm = r.user.dmChannel();
-        	r.user.dmChannel().sendMessage('test');
+        	//r.user.dmChannel().sendMessage('test');
+        	console.log(r.user.dmChannel);
         }
       });
     });
