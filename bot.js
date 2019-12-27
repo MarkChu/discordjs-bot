@@ -215,7 +215,7 @@ client.on('message', message => {
 		.setTimestamp();
 		message.channel.send(exampleEmbed);
 
-	}elseif(command==='register'){
+	}else if(command==='register'){
 
 		var q_userid = mysql.raw("'"+clientid+"'");
 		var q_authorid = mysql.raw("'"+authorid+"'");
