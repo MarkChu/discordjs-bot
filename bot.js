@@ -46,7 +46,8 @@ client.once('ready', () => {
 	});
 
 
-	getUsers();
+	var user = getUsers('85747967906054144');
+	user.sendMessage('test');
 
 });
 
@@ -54,23 +55,25 @@ client.once('ready', () => {
 client.login(token);
 
 
-function getUsers() {
+function getUsers(fnuserid) {
   let guilds = client.guilds.array();
 
   for (let i = 0; i < guilds.length; i++) {
     client.guilds.get(guilds[i].id).fetchMembers().then(r => {
       r.members.array().forEach(r => {
-        let username = `${r.user.username}#${r.user.discriminator}(${r.user.id})`;
-        console.log(`${username}`);
-        if(r.user.id === '85747967906054144'){
+        //let username = `${r.user.username}#${r.user.discriminator}(${r.user.id})`;
+        //console.log(`${username}`);
+        if(r.user.id === fnuserid ){
+        	return r.user;
         	//var dm = r.user.dmChannel();
         	//r.user.dmChannel().sendMessage('test');
         	//console.log(r.user.dmChannel);
-        	r.user.sendMessage('test');
+        	//r.user.sendMessage('test');
         }
       });
     });
   }
+  return null;
 }
 
 
