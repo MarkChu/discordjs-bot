@@ -183,8 +183,10 @@ client.on('message', message => {
 			break;
 
 		case 'webhook':
-			var islogin = checklogin(authorid);
-			message.channel.send(islogin);
+			checklogin(authorid).then(function(logstat){
+				message.channel.send(logstat);	
+			});
+			
 
 			break;
 		case 'register':
@@ -484,7 +486,8 @@ function handleError (error) {
 }
 
 
-function checklogin(authorid){
+function checkuser(authorid) {
+  return new Promise(function(resolve, reject) { 	
 	var q_authorid = mysql.raw("'"+authorid+"'");
 	var sqlstr = "select uniqid,left(convert(limitdate,DATETIME),16) as limitdate ";			    
 		sqlstr += "from tblUser ";
@@ -494,10 +497,10 @@ function checklogin(authorid){
 	pool.query(sqlstr, function(err, result, fields) {
 	    if (err) handleError(err);
 	    if(result.length>0){
-	    	return true;
+	    	resolve(true);
 	    }else{
-	    	return false;
+	    	resolve(false);
 	    }
 	});
+  })
 }
-
