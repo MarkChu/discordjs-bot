@@ -184,7 +184,15 @@ client.on('message', message => {
 
 		case 'webhook':
 			checklogin(authorid).then(function(logstat){
-				message.channel.send(logstat);	
+				if(logstat){
+					
+
+
+					
+				}else{
+					message.channel.send("您還沒有進行註冊喔!!");	
+					return;	
+				}
 			});
 			
 
@@ -483,6 +491,18 @@ client.on('message', message => {
 
 function handleError (error) {
 	console.log(error);
+}
+
+
+function checkuser(authid,rollback){
+	checklogin(authid).then(function(logstat){
+		if(logstat){
+			rollback(logstat)
+		}else{
+			message.channel.send(logstat);		
+			return;
+		}
+	});
 }
 
 
