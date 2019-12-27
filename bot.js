@@ -46,10 +46,21 @@ client.once('ready', () => {
 	});
 
 
-	getuser('85747967906054144').then(function(user){
-		console.log(user);
-	});
-	//user.sendMessage('test');
+
+	Promise.race([
+	  getuser('85747967906054144'),
+	  timeoutPromise(3000)
+	])
+	.then(
+	  function(user) {
+	    user.sendMessage('test');
+	  },
+	  function(err) {
+	    // 可能是被拒絕或擱置超過 3 秒
+	  }
+	);
+
+	
 
 });
 
@@ -591,4 +602,12 @@ function getuser(fnuserid){
 		    });
 		}
 	})
+}
+
+function timeoutPromise(delay) {
+  return new Promise(function(resolve, reject) {
+    setTimeout(function() {
+      reject('Timeout!');
+    }, delay);
+  });
 }
