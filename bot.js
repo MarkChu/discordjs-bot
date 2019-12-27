@@ -42,7 +42,7 @@ client.once('ready', () => {
 	});
 	var j1 = schedule.scheduleJob('0 0 * * * *', function(){
 	  //每到0分時執行一次(每小時)
-	  listboss();
+	  //listboss();
 	});
 
 
@@ -80,7 +80,7 @@ function checkboss(){
 		sqlstr += ",(select cycletime from tblboss z where z.bossid=a.bossid) cycletime ";
 		sqlstr += "from tblUserBoss a ";
 		sqlstr += "where reborntime IS NOT null ";
-		//sqlstr += "and TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime )  in (0 ,5 ,10) ";
+		sqlstr += "and TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime )  in (0 ,5 ,10) ";
 		sqlstr += "order by 4 ";	
 
 	pool.query(sqlstr, function(err, rows, fields) {
@@ -152,14 +152,17 @@ function checkboss(){
 function listboss(){
 
 
-	var sqlstr = "select bossid,imgurl ";			    
+	var sqlstr = "select bossid,userid,(select imgurl from tblboss z where z.bossid=a.bossid) imgurl ";			    
 		sqlstr += ",left(convert(killtime,DATETIME),16) as killed ";
 		sqlstr += ",left(convert(reborntime,DATETIME),16) as reborn ";
 		sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
-		sqlstr += ",cycletime ";
-		sqlstr += "from tblboss ";
-		sqlstr += "where reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
+		sqlstr += ",(select cycletime from tblboss z where z.bossid=a.bossid) cycletime ";
+		sqlstr += "from tblUserBoss a ";
+		sqlstr += "where reborntime IS NOT null ";
+		sqlstr += "and reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
 		sqlstr += "order by 4 ";	
+
+
 
 	pool.query(sqlstr, function(err, rows, fields) {
 	    if (err) handleError(err);
