@@ -60,7 +60,8 @@ function getUsers() {
   for (let i = 0; i < guilds.length; i++) {
     client.guilds.get(guilds[i].id).fetchMembers().then(r => {
       r.members.array().forEach(r => {
-        let username = `${r.user.username}#${r.user.discriminator}(${r.user.userid})`;
+      	const member = guild.member(message.author);
+        let username = `${r.user.username}#${r.user.discriminator}(${r.user.id})`;
         console.log(`${username}`);
       });
     });
