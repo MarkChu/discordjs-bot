@@ -78,7 +78,7 @@ function checkboss(){
 		sqlstr += ",left(convert(reborntime,DATETIME),16) as reborn ";
 		sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
 		sqlstr += ",(select cycletime from tblboss z where z.bossid=a.bossid) cycletime ";
-		sqlstr += "from tblboss ";
+		sqlstr += "from tblUserBoss a ";
 		sqlstr += "where reborntime IS NOT null ";
 		//sqlstr += "and TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime )  in (0 ,5 ,10) ";
 		sqlstr += "order by 4 ";	
