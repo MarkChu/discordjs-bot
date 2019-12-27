@@ -590,6 +590,5 @@ function getuser(fnuserid){
 		      });
 		    });
 		}
-		resolve(null);
 	})
 }
