@@ -266,7 +266,7 @@ client.on('message', message => {
 			    if(result.length>0){
 				    Object.keys(result).forEach(function(key) {
 				    	var row = result[key];
-				    	message.channel.send( authorname +" ,您已經註冊過了喔!!目前有效期間至 "+row.limitdate+"。" );
+				    	message.author.send( authorname +" ,您已經註冊過了喔!!目前有效期間至 "+row.limitdate+"。" );
 				    });  	
 			    }else{
 
@@ -281,7 +281,7 @@ client.on('message', message => {
 					  var sql2 = mysql.format('INSERT INTO tblUserBoss (userid,bossid) SELECT ?,bossid FROM tblboss;',[q_authorid]);				  
 					  exec_sql(sql1).then(function(rtn1){
 					  	exec_sql(sql2).then(function(rtn2){
-					  		message.channel.send(authorname +" ,使用者註冊成功!!");
+					  		message.author.send(authorname +" ,使用者註冊成功!!");
 					  	});
 					  });
 
