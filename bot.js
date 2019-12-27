@@ -40,11 +40,13 @@ client.once('ready', () => {
 	  //每到0秒時執行一次(每分鐘)
 	  checkboss();
 	});
+
+	/*
 	var j1 = schedule.scheduleJob('0 0 * * * *', function(){
 	  //每到0分時執行一次(每小時)
-	  //listboss();
+	  listboss();
 	});
-
+	*/
 
 	/*
 	Promise.race([
@@ -138,11 +140,9 @@ function checkboss(){
 			    // 可能是被拒絕或擱置超過 3 秒
 			  }
 			);
-			
-			//message.author.send(msg);						
+							
 		}
-		//Hook.info("小馬怪",msgcontent);
-		//console.log(msgcontent);
+
 
 	});
 
@@ -526,7 +526,7 @@ client.on('message', message => {
 
 
 			}else{
-				message.channel.send("您還沒有進行註冊喔!!");	
+				message.channel.send("您還沒有進行註冊喔，可以使用 ^register 進行註冊。");	
 				return;	
 			}
 		});
