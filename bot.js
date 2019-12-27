@@ -193,7 +193,7 @@ client.on('message', message => {
 				sqlstr += "from tblUser ";
 				sqlstr += "where userid= ? ";
 
-			sqlstr = mysql.format(sqlstr, [ q_userid ] );
+			sqlstr = mysql.format(sqlstr, [ q_authorid ] );
 
 
 			pool.query(sqlstr, function(err, result, fields) {
@@ -207,8 +207,8 @@ client.on('message', message => {
 			    }else{
 
 					var q_regdate = mysql.raw("DATE_ADD( NOW() , INTERVAL 8 HOUR )");
-					var q_limitdate = mysql.raw("DATE_ADD( NOW() , INTERVAL 3 MONTH )");
-					var insert_sql = mysql.format('INSERT INTO tblUser (userid,authorid,authorname,regdate,limitdate) values ( ? , ? , ? , ? , ? );', [q_userid, q_authorid , q_authorname ,q_regdate ,q_limitdate ]);
+					var q_limitdate = mysql.raw("DATE_ADD( NOW() , INTERVAL 12 MONTH )");
+					var insert_sql = mysql.format('INSERT INTO tblUser (userid,authorid,authorname,regdate,limitdate) values ( ? , ? , ? , ? , ? );', [q_authorid, q_authorid , q_authorname ,q_regdate ,q_limitdate ]);
 
 					pool.query(insert_sql, function (error, results, fields) {
 					  if (error) handleError(error);
