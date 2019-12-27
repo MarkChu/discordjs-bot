@@ -47,7 +47,7 @@ client.once('ready', () => {
 
 
 	getuser('85747967906054144').then(function(user){
-		user.sendMessage('test');	
+		console.log(user);
 	});
 	//user.sendMessage('test');
 
@@ -590,6 +590,6 @@ function getuser(fnuserid){
 		      });
 		    });
 		}
-		return resolve(null);
+		resolve(null);
 	})
 }
