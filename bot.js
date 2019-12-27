@@ -185,10 +185,10 @@ client.on('message', message => {
 		case 'webhook':
 			checklogin(authorid).then(function(logstat){
 				if(logstat){
-					
 
 
-					
+
+
 				}else{
 					message.channel.send("您還沒有進行註冊喔!!");	
 					return;	
@@ -228,12 +228,14 @@ client.on('message', message => {
 					pool.query(insert_sql, function (error, results, fields) {
 					  if (error) handleError(error);
 
-					  var gensql = mysql.format('INSERT INTO tblUserBoss (userid,bossid) SELECT ?,bossid FROM tblboss;',[q_authorid]);
-					  pool.query(gensql, function (err2, results, fields) {
-					  if (err2) handleError(err2);
-					  	message.channel.send(authorname +" ,使用者註冊成功!!");
+					  var sql1 = mysql.format('DELETE FROM tblUserBoss WHERE userid= ? ;',[q_authorid]);				  
+					  var sql2 = mysql.format('INSERT INTO tblUserBoss (userid,bossid) SELECT ?,bossid FROM tblboss;',[q_authorid]);				  
+					  exec_sql(sql1).then(function(rtn1){
+					  	exec_sql(sql2).then(function(rtn2){
+					  		message.channel.send(authorname +" ,使用者註冊成功!!");
+					  	});
 					  });
-
+					  
 					})
 
 			    }
@@ -523,4 +525,14 @@ function checklogin(authorid) {
 	    }
 	});
   })
+}
+
+
+function exec_sql(mysql_sql){
+	return new Promise(function(resolve, reject) { 	
+		pool.query(mysql_sql, function (err, results, fields) {
+			if (err) resolve(false);
+			resolve(true);
+		});
+	})
 }
