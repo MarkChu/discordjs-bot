@@ -212,7 +212,13 @@ client.on('message', message => {
 
 					pool.query(insert_sql, function (error, results, fields) {
 					  if (error) handleError(error);
-					  message.channel.send(authorname +" ,使用者註冊成功!!");
+
+					  var gensql = mysql.format('INSERT INTO tblUserBoss (userid,bossid) SELECT ?,bossid FROM tblboss;',[q_authorid]);
+					  pool.query(gensql, function (err2, results, fields) {
+					  if (err2) handleError(err2);
+					  	message.channel.send(authorname +" ,使用者註冊成功!!");
+					  });
+
 					})
 
 			    }
