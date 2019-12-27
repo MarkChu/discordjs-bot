@@ -486,7 +486,7 @@ function handleError (error) {
 }
 
 
-function checkuser(authorid) {
+function checklogin(authorid) {
   return new Promise(function(resolve, reject) { 	
 	var q_authorid = mysql.raw("'"+authorid+"'");
 	var sqlstr = "select uniqid,left(convert(limitdate,DATETIME),16) as limitdate ";			    
