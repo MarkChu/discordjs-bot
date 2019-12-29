@@ -115,10 +115,10 @@ function checkboss(){
 			if(row.imgurl!=null&&row.imgurl!=""){
 	            msg.setImage(row.imgurl)
 			}     
-			   	
-			if(row.bossimg!=null&&row.bossimg!=""){
-	            msg.setImage(row.bossimg)
-			}        	
+
+			//if(row.bossimg!=null&&row.bossimg!=""){
+	        //    msg.setImage(row.bossimg)
+			//}        	
 	        msg.setTimestamp();
 
 
