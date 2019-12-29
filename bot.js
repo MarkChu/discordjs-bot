@@ -277,12 +277,12 @@ client.on('message', message => {
 				case 'map':
 
 					const msg1 = new Discord.RichEmbed();
-					msg.setAuthor("小馬怪")
+					msg1.setAuthor("小馬怪")
 		            .setColor("#ff0000")
 		            .setTitle("古魯丁領地 野王編號 1-01 至 1-05。")
 		            .setImage("https://i.imgur.com/Fx16svB.jpg")
 		            .setTimestamp();
-					message.author.send(msg);
+					message.author.send(msg1);
 
 					const msg2 = new Discord.RichEmbed();
 					msg2.setAuthor("小馬怪")
