@@ -201,6 +201,7 @@ client.on('message', message => {
 
 		const exampleEmbed = new Discord.RichEmbed()
 		.setColor("#0099ff")
+		.addField("機器人網址：",'https://discordapp.com/oauth2/authorize?&client_id=653601639260749835&scope=bot&permissions=0')
 		.setTitle("指令說明："+prefix+"help")
 		.addField(prefix+"register", '第一次註冊開始使用。')
 		.addField(prefix+"map", '列出野王地圖及編號。')
