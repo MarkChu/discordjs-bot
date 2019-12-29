@@ -80,10 +80,11 @@ function checkboss(){
 		sqlstr += ",left(convert(reborntime,DATETIME),16) as reborn ";
 		sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
 		sqlstr += ",(select cycletime from tblboss z where z.bossid=a.bossid) cycletime ";
+		sqlstr += ",(select bossimg from tblboss z where z.bossid=a.bossid) bossimg ";
 		sqlstr += "from tblUserBoss a ";
 		sqlstr += "where reborntime IS NOT null ";
 		sqlstr += "and TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime )  in (0 ,5 ,10) ";
-		sqlstr += "order by 4 ";	
+		sqlstr += "order by 5 ";	
 
 	pool.query(sqlstr, function(err, rows, fields) {
 		if (err) handleError(err);
@@ -104,28 +105,21 @@ function checkboss(){
 
         	const msg = new Discord.RichEmbed();
 
+        	msg.setAuthor("小馬怪")
+            .setColor("#ff0000")
+            .setTitle(msgcontent)
+            .addField("野王編號", row.bossid )
+            .addField("預計出現時間", row.reborn )
+            .addField("重生時間", row.cycletime + " 小時");
+
 			if(row.imgurl!=null&&row.imgurl!=""){
-
-	        	msg.setAuthor("小馬怪")
-	            .setColor("#ff0000")
-	            .setTitle(msgcontent)
-	            .addField("野王編號", row.bossid )
-	            .addField("預計出現時間", row.reborn )
-	            .addField("重生時間", row.cycletime + " 小時")
-	            .setImage(row.imgurl)
-	            .setTimestamp();
-
-			}else{
-
-	        	msg.setAuthor("小馬怪")
-	            .setColor("#ff0000")
-	            .setTitle(msgcontent)
-	            .addField("野王編號", row.bossid )
-	            .addField("預計出現時間", row.reborn )
-	            .addField("重生時間", row.cycletime + " 小時")
-	            .setTimestamp();
-
+	            msg.setImage(row.imgurl)
+			}     
+			   	
+			if(row.bossimg!=null&&row.bossimg!=""){
+	            msg.setImage(row.bossimg)
 			}        	
+	        msg.setTimestamp();
 
 
 			Promise.race([
@@ -280,25 +274,25 @@ client.on('message', message => {
 					msg1.setAuthor("小馬怪")
 		            .setColor("#ff0000")
 		            .setTitle("古魯丁領地 野王編號 1-01 至 1-05。")
-		            .setImage("https://i.imgur.com/Fx16svB.jpg")
+		            .setImage("https://i.imgur.com/S0dRDS4.jpg")
 		            .setTimestamp();
-					message.author.send(msg1);
+					message.channel.send(msg1);
 
 					const msg2 = new Discord.RichEmbed();
 					msg2.setAuthor("小馬怪")
 		            .setColor("#ff0000")
 		            .setTitle("狄恩領地 野王編號 2-01 至 2-10、克3、克6")
-		            .setImage("https://i.imgur.com/uJRz7OC.jpg")
+		            .setImage("https://i.imgur.com/Pkg7Qrb.jpg")
 		            .setTimestamp();
-					message.author.send(msg2);
+					message.channel.send(msg2);
 
 					const msg3 = new Discord.RichEmbed();
 					msg3.setAuthor("小馬怪")
 		            .setColor("#ff0000")
 		            .setTitle("奇岩領地 野王編號 3-01 至 3-07。")
-		            .setImage("https://i.imgur.com/uJRz7OC.jpg")
+		            .setImage("https://i.imgur.com/EstZyjp.jpg")
 		            .setTimestamp();
-					message.author.send(msg3);
+					message.channel.send(msg3);
 
 
 					break;
