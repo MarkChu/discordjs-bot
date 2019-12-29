@@ -62,10 +62,26 @@ client.once('ready', () => {
 	  }
 	);
 	*/
-	
-	
-
 });
+
+
+client.on("guildCreate", guild => {
+    let channelID;
+    let channels = guild.channels;
+    channelLoop:
+    for (let c of channels) {
+        let channelType = c[1].type;
+        if (channelType === "text") {
+            channelID = c[0];
+            break channelLoop;
+        }
+    }
+
+    let channel = client.channels.get(guild.systemChannelID || channelID);
+    channel.send(`Thanks for inviting me into this server!`);
+});
+
+
 
 // login to Discord with your app's token
 client.login(token);
