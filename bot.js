@@ -64,7 +64,7 @@ client.once('ready', () => {
 	*/
 });
 
-
+//被邀請加入時的訊息。
 client.on("guildCreate", guild => {
     let channelID;
     let channels = guild.channels;
@@ -78,7 +78,7 @@ client.on("guildCreate", guild => {
     }
 
     let channel = client.channels.get(guild.systemChannelID || channelID);
-    channel.send(`Thanks for inviting me into this server!`);
+    channel.send(`謝謝你邀請我加入，您可以使用 ^help 查看所有指令喔!`);
 });
 
 
