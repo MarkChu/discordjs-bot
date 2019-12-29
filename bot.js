@@ -121,8 +121,7 @@ function checkboss(){
 
         	const msg = new Discord.RichEmbed();
 
-        	msg.setAuthor("小馬怪")
-            .setColor("#ff0000")
+        	msg.setColor("#ff0000")
             .setTitle(msgcontent)
             .addField("野王編號", row.bossid )
             .addField("預計出現時間", row.reborn )
@@ -288,24 +287,21 @@ client.on('message', message => {
 				case 'map':
 
 					const msg1 = new Discord.RichEmbed();
-					msg1.setAuthor("小馬怪")
-		            .setColor("#ff0000")
+					msg1.setColor("#ff0000")
 		            .setTitle("古魯丁領地 野王編號 1-01 至 1-05。")
 		            .setImage("https://i.imgur.com/S0dRDS4.jpg")
 		            .setTimestamp();
 					message.channel.send(msg1);
 
 					const msg2 = new Discord.RichEmbed();
-					msg2.setAuthor("小馬怪")
-		            .setColor("#ff0000")
+					msg2.setColor("#ff0000")
 		            .setTitle("狄恩領地 野王編號 2-01 至 2-10、克3、克6")
 		            .setImage("https://i.imgur.com/Pkg7Qrb.jpg")
 		            .setTimestamp();
 					message.channel.send(msg2);
 
 					const msg3 = new Discord.RichEmbed();
-					msg3.setAuthor("小馬怪")
-		            .setColor("#ff0000")
+					msg3.setColor("#ff0000")
 		            .setTitle("奇岩領地 野王編號 3-01 至 3-07。")
 		            .setImage("https://i.imgur.com/EstZyjp.jpg")
 		            .setTimestamp();
@@ -315,9 +311,10 @@ client.on('message', message => {
 					break;
 				case 'maintain':
 					if (!args.length) {
-						message.author.send("參數輸入錯誤, "+message.author+"!");
-						message.author.send("輸入方式如下：");
-						message.author.send(prefix+"maintain 日期時間：維護時間，全部的王的重生時間重置。");
+						var msg = "參數輸入錯誤, "+message.author+"!\n";
+						msg += "輸入方式如下：\n";
+						msg += prefix+"maintain 日期時間：維護時間，全部的王的重生時間重置。";
+						message.author.send(msg);
 					}else{
 
 						var input_time = args[0];
@@ -358,9 +355,12 @@ client.on('message', message => {
 
 				case 'reset':
 					if (!args.length) {
-						message.author.send("參數輸入錯誤, "+message.author+"!");
-						message.author.send("輸入方式如下：");
-						message.author.send(prefix+"reset 野王編號 ：清空重生時間。");
+
+						var msg = "參數輸入錯誤, "+message.author+"!\n";
+						msg += "輸入方式如下：\n";
+						msg += prefix+"reset 野王編號 ：清空重生時間。";
+						message.author.send(msg);
+
 					}else{
 
 						var bossid = args[0];
@@ -406,10 +406,13 @@ client.on('message', message => {
 
 				case 'kill':
 					if (!args.length) {
-						message.author.send("參數輸入錯誤, "+message.author+"!");
-						message.author.send("輸入方式如下：");
-						message.author.send(prefix+"kill 野王編號 ：更新擊殺野王的時間，會使用系統時間-3分鐘 。");
-						message.author.send(prefix+"kill 野王編號 日期時間：更新擊殺野王的時間，時間輸入範例如: 2019/12/10 11:50 轉換成 201912101150 。");
+
+						var msg = "參數輸入錯誤, "+message.author+"!\n";
+						msg += "輸入方式如下：\n";
+						msg += prefix+"kill 野王編號 ：更新擊殺野王的時間，會使用系統時間-3分鐘。\n";
+						msg += prefix+"kill 野王編號 日期時間：更新擊殺野王的時間，時間輸入範例如: 2019/12/10 11:50 轉換成 201912101150 。";
+						message.author.send(msg);
+
 					}else{
 
 						var bossid = args[0];
