@@ -209,6 +209,7 @@ client.on('message', message => {
 		.setColor("#0099ff")
 		.setTitle("指令說明："+prefix+"help")
 		.addField(prefix+"register", '第一次註冊開始使用。')
+		.addField(prefix+"map", '列出野王地圖及編號。')
 		.addField(prefix+"boss", '列出目前有紀錄的BOSS重生時間。')
 		.addField(prefix+"bossall", '列出目前建檔的BOSS。')
 		.addField(prefix+"kill 野王編號", '更新擊殺野王的時間，會使用系統時間-3分鐘 。')
@@ -272,6 +273,35 @@ client.on('message', message => {
 
 
 			switch(command){
+
+				case 'map':
+
+					const msg1 = new Discord.RichEmbed();
+					msg.setAuthor("小馬怪")
+		            .setColor("#ff0000")
+		            .setTitle("古魯丁領地 野王編號 1-01 至 1-05。")
+		            .setImage("https://i.imgur.com/Fx16svB.jpg")
+		            .setTimestamp();
+					message.author.send(msg);
+
+					const msg2 = new Discord.RichEmbed();
+					msg2.setAuthor("小馬怪")
+		            .setColor("#ff0000")
+		            .setTitle("狄恩領地 野王編號 2-01 至 2-10、克3、克6")
+		            .setImage("https://i.imgur.com/uJRz7OC.jpg")
+		            .setTimestamp();
+					message.author.send(msg2);
+
+					const msg3 = new Discord.RichEmbed();
+					msg3.setAuthor("小馬怪")
+		            .setColor("#ff0000")
+		            .setTitle("奇岩領地 野王編號 3-01 至 3-07。")
+		            .setImage("https://i.imgur.com/uJRz7OC.jpg")
+		            .setTimestamp();
+					message.author.send(msg3);
+
+
+					break;
 				case 'maintain':
 					if (!args.length) {
 						message.author.send("參數輸入錯誤, "+message.author+"!");
