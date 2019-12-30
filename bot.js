@@ -309,14 +309,16 @@ client.on('message', message => {
 
 					if (!args.length) {
 
+						console.log("show notify..");
 						var sqlstr = "select server,channel,wbname,ison ";			    
 							sqlstr += "from tblChannelWebhook ";
 							sqlstr += "where userid='"+authorid+"'";
 							sqlstr += "order by uniqid";
+						console.log(sqlstr);
 						query_sql(sqlstr).then(function(rtn){	
 							Object.keys(rtn).forEach(function(key) {
 							    var row = rtn[key];
-					    		
+					    		console.log(row);
 					    		Promise.all(getServerAndChannel(row.server,row.channel))
 								.then(function ([s, c]) { // 解構
 								  console.log(s, c);  
@@ -364,8 +366,9 @@ client.on('message', message => {
 										//console.log(sql);
 									  	exec_sql(sql).then(function(rtn2){
 									  		message.channel.send(message.author+",目前頻道:【"+message.channel.name+"】 頻道通知已刪除!!");
+									  		return;
 									  	});
-								 		return;
+								 		
 									});	
 								});		
 
@@ -431,7 +434,6 @@ client.on('message', message => {
 
 
 								break;
-
 							case 'off':
 								var q_userid = mysql.raw("'"+authorid+"'");
 
@@ -443,7 +445,6 @@ client.on('message', message => {
 							  	});		
 
 								break;
-
 							case 'on':
 								var q_userid = mysql.raw("'"+authorid+"'");
 
