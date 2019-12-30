@@ -321,11 +321,10 @@ client.on('message', message => {
 					    		//console.log(row);
 					    		//var server ;
 					    		//server = await getserver(row.server);
-					    		(async () => {
-									console.log(await getserver(row.server))
-								})() => {
-									console.log(await getchannel(row.channel))	
-								}()
+					    		getServerAndChannel(row.server,row.channel)
+					    		.then(rtn =>{
+					    			console.log(rtn);
+					    		})
 					    		//console.log(server);
 						 		//return;
 							});	
@@ -846,14 +845,13 @@ function exec_sql(mysql_sql){
 }
 
 
-function getServerAndChannel(fnserverid, fnchannelid) {
-  return [
-    getserver(fnserverid),
-    getchannel(fnchannelid)
-  ];
+async function getServerAndChannel(fnserverid, fnchannelid) {
+  const s = await getserver(fnserverid);
+  const c = await getchannel(fnchannelid);
+  return [s,c]; 
 }
 
-async function getserver(fnserverid){
+function getserver(fnserverid){
 	return new Promise(function(resolve, reject) { 
 		let guilds = client.guilds.array();
 		for (let i = 0; i < guilds.length; i++) {
@@ -866,7 +864,7 @@ async function getserver(fnserverid){
 	})
 }
 
-async function getchannel(fnchannelid){
+function getchannel(fnchannelid){
 	return new Promise(function(resolve, reject) { 
 		let guilds = client.guilds.array();
 		for (let i = 0; i < guilds.length; i++) {
