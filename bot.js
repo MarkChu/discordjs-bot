@@ -344,9 +344,9 @@ client.on('message', message => {
 										done = true;
 									}
 									if(done){
-										console.log(msg);
+										//console.log(msg);
 										var msgcontent = "";
-										for(m=0;m<msg.lenght;m++){
+										for(m=0;m<msg.length;m++){
 											msgcontent += msg[m]+"\n";
 										}
 										if(msgcontent!=""){
