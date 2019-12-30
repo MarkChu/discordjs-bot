@@ -319,11 +319,9 @@ client.on('message', message => {
 							Object.keys(rtn).forEach(function(key) {
 							    var row = rtn[key];
 					    		console.log(row);
-					    		Promise.all(getServerAndChannel(row.server,row.channel))
-								.then(function ([s, c]) { // 解構
-								  console.log(s, c);  
-								});
-
+					    		var server ;
+					    		await server = getserver(row.server);
+					    		console.log(server);
 						 		//return;
 							});	
 						});
@@ -850,7 +848,7 @@ function getServerAndChannel(fnserverid, fnchannelid) {
   ];
 }
 
-function getserver(fnserverid){
+async function getserver(fnserverid){
 	return new Promise(function(resolve, reject) { 
 		let guilds = client.guilds.array();
 		for (let i = 0; i < guilds.length; i++) {
@@ -863,7 +861,7 @@ function getserver(fnserverid){
 	})
 }
 
-function getchannel(fnchannelid){
+async function getchannel(fnchannelid){
 	return new Promise(function(resolve, reject) { 
 		let guilds = client.guilds.array();
 		for (let i = 0; i < guilds.length; i++) {
