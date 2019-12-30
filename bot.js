@@ -48,20 +48,20 @@ client.once('ready', () => {
 	});
 	*/
 
-	/*
+
 	Promise.race([
-	  getuser('85747967906054144'),
+	  getserver('661208151865032710'),
 	  timeoutPromise(3000)
 	])
 	.then(
-	  function(user) {
-	    user.sendMessage('test');
+	  function(server) {
+	    console.log(server);
 	  },
 	  function(err) {
 	    // 可能是被拒絕或擱置超過 3 秒
 	  }
 	);
-	*/
+
 });
 
 //被邀請加入時的訊息。
@@ -307,6 +307,7 @@ client.on('message', message => {
 					var cid = message.channel.id;
 
 					if (!args.length) {
+
 						/*
 						const listedChannels = []; 
 						message.guild.channels.forEach(channel => { 
@@ -820,6 +821,20 @@ function exec_sql(mysql_sql){
 			if (err) resolve(false);
 			resolve(true);
 		});
+	})
+}
+
+
+function getserver(fnserverid){
+	return new Promise(function(resolve, reject) { 
+		let guilds = client.guilds.array();
+		for (let i = 0; i < guilds.length; i++) {
+			if(guilds[i].id===fnserverid){
+				var g = client.guilds.get(guilds[i].id);
+				resolve(g);
+			}
+			resolve(null);
+		}
 	})
 }
 
