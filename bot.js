@@ -322,9 +322,10 @@ client.on('message', message => {
 					    		//var server ;
 					    		//server = await getserver(row.server);
 					    		getServerAndChannel(row.server,row.channel)
-					    		.then(rtn =>{
+					    		.then(rtn => {
 					    			console.log(rtn);
 					    		})
+					    		.catch(console.error);
 					    		//console.log(server);
 						 		//return;
 							});	
