@@ -230,7 +230,7 @@ client.on('message', message => {
 
 		const exampleEmbed = new Discord.RichEmbed()
 		.setColor("#0099ff")
-		.addField("機器人網址：",'https://discordapp.com/oauth2/authorize?&client_id=653601639260749835&scope=bot&permissions=0')
+		.addField("機器人網址：",'https://discordapp.com/oauth2/authorize?&client_id=653601639260749835&scope=bot&permissions=537918656')
 		.setTitle("指令說明："+prefix+"help")
 		.addField(prefix+"register", '第一次註冊開始使用。')
 		.addField(prefix+"map", '列出野王地圖及編號。')
@@ -240,6 +240,9 @@ client.on('message', message => {
 		.addField(prefix+"kill 野王編號 日期時間", '更新擊殺野王的時間，時間輸入範例如: 2019/12/10 11:50 轉換成 201912101150 。')
 		.addField(prefix+"reset 野王編號", '清空特定野王的擊殺時間與重生時間。')
 		.addField(prefix+"maintain 日期時間", '維護時間，全部的王的重生時間重置。')
+		.addField(prefix+"notify", '顯示目前的設置的頻道通知狀態。')
+		.addField(prefix+"notify on", '啟用頻道通知。')
+		.addField(prefix+"notify off", '啟用頻道停用。')
 		.setTimestamp();
 		message.channel.send(exampleEmbed);
 
@@ -297,6 +300,31 @@ client.on('message', message => {
 
 
 			switch(command){
+
+				case 'notify':
+					if (!args.length) {
+						
+					 	let channelID;
+					    let channels = guild.channels;
+					    channelLoop:
+					    for (let c of channels) {
+					        let channelType = c[1].type;
+					        if (channelType === "text") {
+					            channelID = c[0];
+					            console.log(c);
+					            //break channelLoop;
+					        }
+					    }
+
+
+
+
+
+					}else{
+
+					}
+
+					break;
 
 				case 'map':
 
