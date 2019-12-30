@@ -318,12 +318,14 @@ client.on('message', message => {
 						query_sql(sqlstr).then(function(rtn){	
 							Object.keys(rtn).forEach(function(key) {
 							    var row = rtn[key];
-					    		console.log(row);
-					    		var server ;
+					    		//console.log(row);
+					    		//var server ;
 					    		//server = await getserver(row.server);
 					    		(async () => {
-								   console.log(await getserver(row.server))
-								})()
+									console.log(await getserver(row.server))
+								})() => {
+									console.log(await getchannel(row.channel))	
+								}()
 					    		//console.log(server);
 						 		//return;
 							});	
