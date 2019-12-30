@@ -309,12 +309,14 @@ client.on('message', message => {
 
 					if (!args.length) {
 
-						console.log("show notify..");
+						//console.log("show notify..");
 						var sqlstr = "select server,channel,wbname,ison ";			    
 							sqlstr += "from tblChannelWebhook ";
 							sqlstr += "where userid='"+authorid+"'";
 							sqlstr += "order by uniqid";
-						console.log(sqlstr);
+						//console.log(sqlstr);
+						var msg = [];
+						var sn = 0;
 						query_sql(sqlstr).then(function(rtn){	
 							Object.keys(rtn).forEach(function(key) {
 							    var row = rtn[key];
@@ -323,12 +325,16 @@ client.on('message', message => {
 					    		//server = await getserver(row.server);
 					    		getServerAndChannel(row.server,row.channel)
 					    		.then(rtn => {
-					    			console.log(rtn);
+					    			sn ++;
+					    			var s = rtn[0];
+					    			var c = rtn[1];
+					    			msg.push(sn+".伺服器:"+s.name+",頻道:"+c.name+":"+(row.ison=="Y"?"啟用":"停用"));
 					    		})
 					    		.catch(console.error);
 					    		//console.log(server);
 						 		//return;
 							});	
+							console.log(msg);
 						});
 						/*
 						const listedChannels = []; 
