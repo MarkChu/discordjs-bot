@@ -303,16 +303,23 @@ client.on('message', message => {
 
 				case 'notify':
 					if (!args.length) {
-						
+						var server = message.guild.id;
+
 						const listedChannels = []; 
 						message.guild.channels.forEach(channel => { 
 						    if(channel.permissionsFor(message.author).has('VIEW_CHANNEL')){
-						    	listedChannels.push(channel.name);
-						    	console.log(channel)	
+						    	if(channel.type==="text"){
+						    		var c = {
+						    			server : server ,
+						    			id: channel.id ,
+						    			name : channel.name ,
+						    		}
+						    		listedChannels.push(channel);
+						    	}						    		
 						    } 
 						});
 						//message.channel.send(`You have access to: ${listedChannels.join(',')}`);
-
+						console.log(listedChannels);
 
 					}else{
 
