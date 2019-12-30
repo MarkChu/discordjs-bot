@@ -339,9 +339,8 @@ client.on('message', message => {
 								query_sql(sqlstr).then(function(rtn){	
 									Object.keys(rtn).forEach(function(key) {
 									    var row = rtn[key];
-									    uniqid = row.uniqid;
-									    
-									    q_uniqid = mysql.raw(uniqid);
+							    
+									    var q_uniqid = mysql.raw(row.uniqid);
 									    var del_sql = "DELETE FROM tblChannelWebhook WHERE uniqid = ? ;";
 									    var sql = mysql.format(del_sql , [q_uniqid] );
 										//console.log(sql);
@@ -371,9 +370,6 @@ client.on('message', message => {
 
 										Object.keys(rtn).forEach(function(key) {
 									      	var row = rtn[key];
-									      	uniqid = row.uniqid;
-									      	isNotExist = false;
-
 									 		message.channel.send(message.author+",您在此頻道:【"+message.channel.name+"】 已設定過通知!!");
 									 		return;
 									    });  	
@@ -411,8 +407,9 @@ client.on('message', message => {
 									});
 
 									
+								}else{
+									message.channel.send(message.author+",小馬怪權限不足，無法幫你設定頻道通知，請來訊管理員!!");
 								}	
-
 
 
 								break;
