@@ -308,6 +308,7 @@ client.on('message', message => {
 					var cid = message.channel.id;
 
 					if (!args.length) {
+
 						var sqlstr = "select server,channel,wbname,ison ";			    
 							sqlstr += "from tblChannelWebhook ";
 							sqlstr += "where userid='"+authorid+"'";
@@ -321,7 +322,7 @@ client.on('message', message => {
 								  console.log(s, c);  
 								});
 
-						 		return;
+						 		//return;
 							});	
 						});
 						/*
