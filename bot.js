@@ -833,7 +833,7 @@ function getserver(fnserverid){
 				var g = client.guilds.get(guilds[i].id);
 				resolve(g);
 			}
-			resolve(null);
+			//resolve(null);
 		}
 	})
 }
