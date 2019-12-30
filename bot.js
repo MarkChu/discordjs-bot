@@ -319,8 +319,7 @@ client.on('message', message => {
 							Object.keys(rtn).forEach(function(key) {
 							    var row = rtn[key];
 					    		console.log(row);
-					    		var server ;
-					    		await server = getserver(row.server);
+					    		var server = await getserver(row.server);
 					    		console.log(server);
 						 		//return;
 							});	
