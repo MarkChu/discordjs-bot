@@ -340,7 +340,7 @@ client.on('message', message => {
 									Object.keys(rtn).forEach(function(key) {
 									    var row = rtn[key];
 							    
-									    var q_uniqid = mysql.raw(row.uniqid);
+									    var q_uniqid = mysql.raw(""+row.uniqid+"");
 									    var del_sql = "DELETE FROM tblChannelWebhook WHERE uniqid = ? ;";
 									    var sql = mysql.format(del_sql , [q_uniqid] );
 										//console.log(sql);
