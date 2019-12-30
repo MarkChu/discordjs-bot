@@ -330,7 +330,7 @@ client.on('message', message => {
 					    			var s = rtn[0];
 					    			var c = rtn[1];
 					    			var str =sn+".伺服器:"+s.name+",頻道:"+c.name+":"+(row.ison=="Y"?"啟用":"停用"); 
-					    			console.log(str);
+					    			//console.log(str);
 					    			msg.push(str);
 					    		})
 					    		.catch(console.error);
@@ -338,20 +338,23 @@ client.on('message', message => {
 						 		//return;
 							});	
 
-							function a(){
+							function callback(){
 								setTimeout(function(){
 									if(sn==rtn.length){
 										done = true;
 									}
 									if(done){
-										console.log(msg);
+										var msgcontent = "";
+										for(i=0;i<msg.lenght;i++){
+											msgcontent += msg[i]+"\n";
+										}
+										message.channel.send(msgcontent);	
 										return;
 									}
-									a();
+									callback();
 								},100);
 							}
-							
-							a();
+							callback();
 						});
 						/*
 						const listedChannels = []; 
