@@ -241,8 +241,9 @@ client.on('message', message => {
 		.addField(prefix+"reset 野王編號", '清空特定野王的擊殺時間與重生時間。')
 		.addField(prefix+"maintain 日期時間", '維護時間，全部的王的重生時間重置。')
 		.addField(prefix+"notify", '顯示目前的設置的頻道通知狀態。')
-		.addField(prefix+"notify on", '啟用頻道通知。')
-		.addField(prefix+"notify off", '啟用頻道停用。')
+		.addField(prefix+"notify add", '將目前所在頻道加入頻道通知。')
+		.addField(prefix+"notify on", '啟用所有設定過的頻道通知。')
+		.addField(prefix+"notify off", '停用所有設定過的頻道通知。')
 		.setTimestamp();
 		message.channel.send(exampleEmbed);
 
@@ -329,21 +330,64 @@ client.on('message', message => {
 					}else{
 						var input = args[0];
 						switch(input){
-							case 'on':
+							case 'add':
 
 								if(message.guild.me.hasPermission('MANAGE_WEBHOOKS')){
 
-									var webhookname = "小馬怪通知";
-									// This will create the webhook with the name "Example Webhook" and an example avatar.
-									message.channel.createWebhook(webhookname, "https://i.imgur.com/P4yamS3.jpg")
-									// This will actually set the webhooks avatar, as mentioned at the start of the guide.
-									.then(webhook => webhook.edit(webhookname, "https://i.imgur.com/P4yamS3.jpg")
-									// This will get the bot to DM you the webhook, if you use this in a selfbot,
-									// change it to a console.log as you cannot DM yourself
-									.then(wb => {
-										message.channel.send(`Here is your webhook https://canary.discordapp.com/api/webhooks/${wb.id}/${wb.token}`)	
-									}).catch(console.error));
+									var sqlstr = "select uniqid ";			    
+									sqlstr += "from tblChannelWebhook ";
+									sqlstr += "where userid='"+authorid+"'";
+									sqlstr += "and server='"+sid+"'";
+									sqlstr += "and channel='"+cid+"'";
+									console.log(sqlstr);
 
+									query_sql(sqlstr).then(function(rtn){
+
+									  	console.log(rtn);
+										var isNotExist = true;
+
+										Object.keys(result).forEach(function(key) {
+									      	var row = result[key];
+									      	uniqid = row.uniqid;
+									      	isNotExist = false;
+
+									 		message.channel.send(message.author+",您在此頻道已設定過通知!!");
+									 		return;
+									    });  	
+									    if(isNotExist){
+									    	//create webhook 
+											var webhookname = "小馬怪通知at"+message.channel.name+"_"+authorid;
+											// This will create the webhook with the name "Example Webhook" and an example avatar.
+											message.channel.createWebhook(webhookname, "https://i.imgur.com/P4yamS3.jpg")
+											// This will actually set the webhooks avatar, as mentioned at the start of the guide.
+											.then(webhook => webhook.edit(webhookname, "https://i.imgur.com/P4yamS3.jpg")
+											// This will get the bot to DM you the webhook, if you use this in a selfbot,
+											// change it to a console.log as you cannot DM yourself
+											.then(wb => {
+												var q_userid = mysql.raw("'"+authorid+"'");
+												var q_server = mysql.raw("'"+sid+"'");
+												var q_channel = mysql.raw("'"+cid+"'");
+												var q_wbname = mysql.raw("'"+webhookname+"'");
+												var q_wbid = mysql.raw("'"+wb.id+"'");
+												var q_wbtoken = mysql.raw("'"+wb.token+"'");
+
+												var insert_sql = "INSERT INTO tblChannelWebhook (userid,server,channel,wbname,wbid,wbtoken,ison,create_date) ";
+													insert_sql += "VALUES (? , ? , ? , ? , ? , ? ,'Y', DATE_ADD(NOW(),INTERVAL 8 HOUR ) ); ";
+												var sql = mysql.format(insert_sql , [q_userid,q_server,q_channel,q_wbname,q_wbid,q_wbtoken] );
+												console.log(sql);
+											  	exec_sql(sql).then(function(rtn2){
+											  		message.channel.send(message.author+",目前頻道設定加入通知成功!!");
+											  	});			  
+												//message.channel.send(`Here is your webhook https://canary.discordapp.com/api/webhooks/${wb.id}/${wb.token}`)	
+
+											}).catch(console.error));
+
+									    }		
+
+
+									});
+
+									
 								}	
 
 
