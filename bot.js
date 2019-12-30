@@ -344,11 +344,14 @@ client.on('message', message => {
 										done = true;
 									}
 									if(done){
+										console.log(msg);
 										var msgcontent = "";
-										for(i=0;i<msg.lenght;i++){
-											msgcontent += msg[i]+"\n";
+										for(m=0;m<msg.lenght;m++){
+											msgcontent += msg[m]+"\n";
 										}
-										message.channel.send(msgcontent);	
+										if(msgcontent!=""){
+											message.channel.send(msgcontent);		
+										}
 										return;
 									}
 									a();
