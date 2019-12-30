@@ -317,6 +317,7 @@ client.on('message', message => {
 						//console.log(sqlstr);
 						var msg = [];
 						var sn = 0;
+						var done = false;
 						query_sql(sqlstr).then(function(rtn){	
 							Object.keys(rtn).forEach(function(key) {
 							    var row = rtn[key];
@@ -336,7 +337,18 @@ client.on('message', message => {
 					    		//console.log(server);
 						 		//return;
 							});	
-							console.log(msg);
+							var a =>(){
+								setTimeout(function(){
+									if(sn==rtn.length){
+										done = true;
+									}
+									if(done){
+										console.log(msg);
+										return;
+									}
+									a();
+								},100);
+							}
 						});
 						/*
 						const listedChannels = []; 
