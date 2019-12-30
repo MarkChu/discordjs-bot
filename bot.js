@@ -306,38 +306,47 @@ client.on('message', message => {
 					var cid = message.channel.id;
 
 					if (!args.length) {
-						var server = message.guild.id;
-
+						/*
 						const listedChannels = []; 
 						message.guild.channels.forEach(channel => { 
 						    if(channel.permissionsFor(message.author).has('VIEW_CHANNEL')){
 						    	if(channel.type==="text"){
 						    		var c = {
-						    			server : server ,
+						    			server : sid ,
 						    			id: channel.id ,
 						    			name : channel.name ,
-						    		}
+						    		};
 						    		listedChannels.push(c);
 						    	}						    		
 						    } 
 						});
 						//message.channel.send(`You have access to: ${listedChannels.join(',')}`);
 						console.log(c);
+						*/
+						
+
 
 					}else{
 						var input = args[0];
-						switch(command){
+						switch(input){
 							case 'on':
-								var webhookname = "小馬怪通知";
-								// This will create the webhook with the name "Example Webhook" and an example avatar.
-								message.channel.createWebhook(webhookname, "https://i.imgur.com/P4yamS3.jpg")
-								// This will actually set the webhooks avatar, as mentioned at the start of the guide.
-								.then(webhook => webhook.edit(webhookname, "https://i.imgur.com/P4yamS3.jpg")
-								// This will get the bot to DM you the webhook, if you use this in a selfbot,
-								// change it to a console.log as you cannot DM yourself
-								.then(wb => {
-									message.channel.send(`Here is your webhook https://canary.discordapp.com/api/webhooks/${wb.id}/${wb.token}`)	
-								}).catch(console.error));
+
+								if(message.guild.me.hasPermission('MANAGE_WEBHOOKS')){
+
+									var webhookname = "小馬怪通知";
+									// This will create the webhook with the name "Example Webhook" and an example avatar.
+									message.channel.createWebhook(webhookname, "https://i.imgur.com/P4yamS3.jpg")
+									// This will actually set the webhooks avatar, as mentioned at the start of the guide.
+									.then(webhook => webhook.edit(webhookname, "https://i.imgur.com/P4yamS3.jpg")
+									// This will get the bot to DM you the webhook, if you use this in a selfbot,
+									// change it to a console.log as you cannot DM yourself
+									.then(wb => {
+										message.channel.send(`Here is your webhook https://canary.discordapp.com/api/webhooks/${wb.id}/${wb.token}`)	
+									}).catch(console.error));
+
+								}	
+
+
 
 								break;
 							case 'off':
