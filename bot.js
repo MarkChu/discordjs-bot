@@ -330,6 +330,29 @@ client.on('message', message => {
 					}else{
 						var input = args[0];
 						switch(input){
+							case 'del':
+								var sqlstr = "select uniqid ";			    
+									sqlstr += "from tblChannelWebhook ";
+									sqlstr += "where userid='"+authorid+"'";
+									sqlstr += "and server='"+sid+"'";
+									sqlstr += "and channel='"+cid+"'";
+								query_sql(sqlstr).then(function(rtn){	
+									Object.keys(rtn).forEach(function(key) {
+									    var row = rtn[key];
+									    uniqid = row.uniqid;
+									    
+									    q_uniqid = mysql.raw(uniqid);
+									    del_sql = "DELETE FROM tblChannelWebhook WHERE uniqid = ? ;";
+									    var sql = mysql.format(del_sql , [q_uniqid] );
+										//console.log(sql);
+									  	exec_sql(sql).then(function(rtn2){
+									  		message.channel.send(message.author+",目前頻道:【"+message.channel.name+"】 頻道通知已刪除!!");
+									  	});
+								 		return;
+									});	
+								});		
+
+								break;
 							case 'add':
 
 								if(message.guild.me.hasPermission('MANAGE_WEBHOOKS')){
@@ -339,11 +362,11 @@ client.on('message', message => {
 									sqlstr += "where userid='"+authorid+"'";
 									sqlstr += "and server='"+sid+"'";
 									sqlstr += "and channel='"+cid+"'";
-									console.log(sqlstr);
+									//console.log(sqlstr);
 
 									query_sql(sqlstr).then(function(rtn){
 
-									  	console.log(rtn);
+									  	//console.log(rtn);
 										var isNotExist = true;
 
 										Object.keys(rtn).forEach(function(key) {
@@ -351,7 +374,7 @@ client.on('message', message => {
 									      	uniqid = row.uniqid;
 									      	isNotExist = false;
 
-									 		message.channel.send(message.author+",您在此頻道已設定過通知!!");
+									 		message.channel.send(message.author+",您在此頻道:【"+message.channel.name+"】 已設定過通知!!");
 									 		return;
 									    });  	
 									    if(isNotExist){
@@ -374,9 +397,9 @@ client.on('message', message => {
 												var insert_sql = "INSERT INTO tblChannelWebhook (userid,server,channel,wbname,wbid,wbtoken,ison,create_date) ";
 													insert_sql += "VALUES (? , ? , ? , ? , ? , ? ,'Y', DATE_ADD(NOW(),INTERVAL 8 HOUR ) ); ";
 												var sql = mysql.format(insert_sql , [q_userid,q_server,q_channel,q_wbname,q_wbid,q_wbtoken] );
-												console.log(sql);
+												//console.log(sql);
 											  	exec_sql(sql).then(function(rtn2){
-											  		message.channel.send(message.author+",目前頻道設定加入通知成功!!");
+											  		message.channel.send(message.author+",目前頻道:【"+message.channel.name+"】 設定加入通知成功!!");
 											  	});			  
 												//message.channel.send(`Here is your webhook https://canary.discordapp.com/api/webhooks/${wb.id}/${wb.token}`)	
 
@@ -393,9 +416,30 @@ client.on('message', message => {
 
 
 								break;
+
 							case 'off':
+								var q_userid = mysql.raw("'"+authorid+"'");
+
+								var update_sql = "UPDATE tblChannelWebhook SET ison='N' WHERE userid = ? ; ";
+								var sql = mysql.format(update_sql , [q_userid] );
+								//console.log(sql);
+							  	exec_sql(sql).then(function(rtn2){
+							  		message.channel.send(message.author+",您的所有頻道通知已全部停用。如要啟用請使用^notify on.");
+							  	});		
 
 								break;
+
+							case 'on':
+								var q_userid = mysql.raw("'"+authorid+"'");
+
+								var update_sql = "UPDATE tblChannelWebhook SET ison='Y' WHERE userid = ? ; ";
+								var sql = mysql.format(update_sql , [q_userid] );
+								//console.log(sql);
+							  	exec_sql(sql).then(function(rtn2){
+							  		message.channel.send(message.author+",您的所有頻道通知已全部啟用.");
+							  	});		
+
+								break;								
 						}
 
 
