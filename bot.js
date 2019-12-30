@@ -48,7 +48,7 @@ client.once('ready', () => {
 	});
 	*/
 
-
+	/*
 	Promise.race([
 	  getserver('661208151865032710'),
 	  timeoutPromise(3000)
@@ -61,6 +61,7 @@ client.once('ready', () => {
 	    // 可能是被拒絕或擱置超過 3 秒
 	  }
 	);
+	*/
 
 });
 
@@ -315,10 +316,10 @@ client.on('message', message => {
 							Object.keys(rtn).forEach(function(key) {
 							    var row = rtn[key];
 					    		
-					    		getServerAndChannel(row.server,row.channel).then(function(rtn){
-					    			var item = rtn;
-					    			console.log(item);
-					    		});
+					    		Promise.all(getServerAndChannel(row.server,row.channel))
+								.then(function ([s, c]) { // 解構
+								  console.log(s, c);  
+								});
 
 						 		return;
 							});	
