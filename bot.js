@@ -342,7 +342,7 @@ client.on('message', message => {
 									    uniqid = row.uniqid;
 									    
 									    q_uniqid = mysql.raw(uniqid);
-									    del_sql = "DELETE FROM tblChannelWebhook WHERE uniqid = ? ;";
+									    var del_sql = "DELETE FROM tblChannelWebhook WHERE uniqid = ? ;";
 									    var sql = mysql.format(del_sql , [q_uniqid] );
 										//console.log(sql);
 									  	exec_sql(sql).then(function(rtn2){
