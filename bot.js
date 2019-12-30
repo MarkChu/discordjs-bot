@@ -304,20 +304,14 @@ client.on('message', message => {
 				case 'notify':
 					if (!args.length) {
 						
-					 	let channelID;
-					    let channels = guild.channels;
-					    channelLoop:
-					    for (let c of channels) {
-					        let channelType = c[1].type;
-					        if (channelType === "text") {
-					            channelID = c[0];
-					            console.log(c);
-					            //break channelLoop;
-					        }
-					    }
-
-
-
+						const listedChannels = []; 
+						message.guild.channels.forEach(channel => { 
+						    if(channel.permissionsFor(message.author).has('VIEW_CHANNEL')){
+						    	listedChannels.push(channel.name);
+						    	console.log(channel)	
+						    } 
+						});
+						//message.channel.send(`You have access to: ${listedChannels.join(',')}`);
 
 
 					}else{
