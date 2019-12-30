@@ -307,7 +307,22 @@ client.on('message', message => {
 					var cid = message.channel.id;
 
 					if (!args.length) {
+						var sqlstr = "select server,channel,wbname,ison ";			    
+							sqlstr += "from tblChannelWebhook ";
+							sqlstr += "where userid='"+authorid+"'";
+							sqlstr += "order by uniqid";
+						query_sql(sqlstr).then(function(rtn){	
+							Object.keys(rtn).forEach(function(key) {
+							    var row = rtn[key];
+					    		
+					    		getServerAndChannel(row.server,row.channel).then(function(rtn){
+					    			var item = rtn;
+					    			console.log(item);
+					    		});
 
+						 		return;
+							});	
+						});
 						/*
 						const listedChannels = []; 
 						message.guild.channels.forEach(channel => { 
@@ -825,6 +840,13 @@ function exec_sql(mysql_sql){
 }
 
 
+function getServerAndChannel(fnserverid, fnchannelid) {
+  return [
+    getserver(fnserverid),
+    getchannel(fnchannelid)
+  ];
+}
+
 function getserver(fnserverid){
 	return new Promise(function(resolve, reject) { 
 		let guilds = client.guilds.array();
@@ -834,6 +856,21 @@ function getserver(fnserverid){
 				resolve(g);
 			}
 			//resolve(null);
+		}
+	})
+}
+
+function getchannel(fnchannelid){
+	return new Promise(function(resolve, reject) { 
+		let guilds = client.guilds.array();
+		for (let i = 0; i < guilds.length; i++) {
+			var g = client.guilds.get(guilds[i].id);
+			for (let x = 0; x < g.channels.length; x++) {
+				var c = g.channels[x];
+				if(c.id===fnchannelid){
+					resolve(c);		
+				}
+			}
 		}
 	})
 }
