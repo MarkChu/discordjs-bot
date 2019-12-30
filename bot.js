@@ -338,7 +338,7 @@ client.on('message', message => {
 						 		//return;
 							});	
 
-							function callback(){
+							function a(){
 								setTimeout(function(){
 									if(sn==rtn.length){
 										done = true;
@@ -351,10 +351,10 @@ client.on('message', message => {
 										message.channel.send(msgcontent);	
 										return;
 									}
-									callback();
+									a();
 								},100);
 							}
-							callback();
+							a();
 						});
 						/*
 						const listedChannels = []; 
