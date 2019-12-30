@@ -848,13 +848,15 @@ function exec_sql(mysql_sql){
 
 async function getServerAndChannel(fnserverid, fnchannelid) {
   const s = await getserver(fnserverid);
-  const c = await getchannel(fnchannelid);
-  return [s,c]; 
+  //const c = await getchannel(fnchannelid);
+  //return [s,c]; 
+  return s;
 }
 
 function getserver(fnserverid){
 	return new Promise(function(resolve, reject) { 
 		let guilds = client.guilds.array();
+		let exist = false
 		for (let i = 0; i < guilds.length; i++) {
 			if(guilds[i].id===fnserverid){
 				var g = client.guilds.get(guilds[i].id);
