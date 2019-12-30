@@ -97,6 +97,7 @@ function checkboss(){
 		sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
 		sqlstr += ",(select cycletime from tblboss z where z.bossid=a.bossid) cycletime ";
 		sqlstr += ",(select bossimg from tblboss z where z.bossid=a.bossid) bossimg ";
+		sqlstr += ",(select rank FROM tblboss z WHERE z.bossid=a.bossid) rank ";
 		sqlstr += "from tblUserBoss a ";
 		sqlstr += "where reborntime IS NOT null ";
 		sqlstr += "and TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime )  in (0 ,5 ,10) ";
@@ -111,7 +112,20 @@ function checkboss(){
 		{
 
 			var row = recordset[i];
-        	var msgcontent = "野王出沒通知：【" + row.bossid + "】";
+			var rank = "";
+			switch(row.rank){
+				case 'r':
+					rank = "紅";
+					break;
+				case 'b':
+					rank = "藍";
+					break;
+				case 'p':
+					rank = "紫";
+					break;
+			}
+
+        	var msgcontent = "野王出沒通知：【" + row.bossid + "("+rank+")" +  "】";
         	//console.log(row);
         	if(parseInt(row.dues)==0){
         		msgcontent += " 目前已經重生，趕快去吃王吧!!";
@@ -123,7 +137,7 @@ function checkboss(){
 
         	msg.setColor("#ff0000")
             .setTitle(msgcontent)
-            .addField("野王編號", row.bossid )
+            .addField("野王編號", row.bossid + "("+rank+")" )
             .addField("預計出現時間", row.reborn )
             .addField("重生時間", row.cycletime + " 小時");
 
@@ -490,6 +504,7 @@ client.on('message', message => {
 						sqlstr += ",left(convert(reborntime,DATETIME),16) as reborn ";
 						sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
 						sqlstr += ",(select cycletime FROM tblboss z WHERE z.bossid=a.bossid) cycletime ";
+						sqlstr += ",(select rank FROM tblboss z WHERE z.bossid=a.bossid) rank ";
 						sqlstr += "from tblUserBoss a ";
 						sqlstr += "where userid = '"+authorid+"'";
 						sqlstr += "order by 1 ";	
@@ -503,7 +518,19 @@ client.on('message', message => {
 						{
 
 							var row = recordset[i];
-							msgcontent += "【野王編號： " + row.bossid + " - 前次擊殺時間： "+(row.killed == null ? "無":row.killed) + " - 重生間格："+ row.cycletime +"小時 - 預計出現時間： "+(row.reborn == null ? "無":row.reborn) +" 】\n";
+							var rank = "";
+							switch(row.rank){
+								case 'r':
+									rank = "紅";
+									break;
+								case 'b':
+									rank = "藍";
+									break;
+								case 'p':
+									rank = "紫";
+									break;
+							}							
+							msgcontent += "【野王編號： " + row.bossid + "("+rank+")" + " - 前次擊殺時間： "+(row.killed == null ? "無":row.killed) + " - 重生間格："+ row.cycletime +"小時 - 預計出現時間： "+(row.reborn == null ? "無":row.reborn) +" 】\n";
 							
 							//message.author.send(msgcontent);						
 						}
@@ -527,6 +554,7 @@ client.on('message', message => {
 						sqlstr += ",left(convert(reborntime,DATETIME),16) as reborn ";
 						sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
 						sqlstr += ",(select cycletime FROM tblboss z WHERE z.bossid=a.bossid) cycletime ";
+						sqlstr += ",(select rank FROM tblboss z WHERE z.bossid=a.bossid) rank ";
 						sqlstr += "from tblUserBoss a ";
 						sqlstr += "where userid = '"+authorid+"'";
 						sqlstr += "and reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
@@ -541,7 +569,19 @@ client.on('message', message => {
 						{
 
 							var row = recordset[i];
-							msgcontent += "【" + row.bossid + " - 預計時間:"+row.reborn+" - 距離現在："+ row.dues +"分鐘】\n";
+							var rank = "";
+							switch(row.rank){
+								case 'r':
+									rank = "紅";
+									break;
+								case 'b':
+									rank = "藍";
+									break;
+								case 'p':
+									rank = "紫";
+									break;
+							}
+							msgcontent += "【" + row.bossid + "("+rank+")" + " - 預計時間:"+row.reborn+" - 距離現在："+ row.dues +"分鐘】\n";
 							
 							//message.author.send(msgcontent);						
 						}
