@@ -346,8 +346,8 @@ client.on('message', message => {
 									  	console.log(rtn);
 										var isNotExist = true;
 
-										Object.keys(result).forEach(function(key) {
-									      	var row = result[key];
+										Object.keys(rtn).forEach(function(key) {
+									      	var row = rtn[key];
 									      	uniqid = row.uniqid;
 									      	isNotExist = false;
 
