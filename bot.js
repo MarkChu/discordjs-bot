@@ -337,7 +337,8 @@ client.on('message', message => {
 					    		//console.log(server);
 						 		//return;
 							});	
-							var a =>(){
+
+							function a(){
 								setTimeout(function(){
 									if(sn==rtn.length){
 										done = true;
@@ -349,6 +350,8 @@ client.on('message', message => {
 									a();
 								},100);
 							}
+							
+							a();
 						});
 						/*
 						const listedChannels = []; 
