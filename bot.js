@@ -302,6 +302,9 @@ client.on('message', message => {
 			switch(command){
 
 				case 'notify':
+					var sid = message.guild.id;
+					var cid = message.channel.id;
+
 					if (!args.length) {
 						var server = message.guild.id;
 
@@ -314,14 +317,34 @@ client.on('message', message => {
 						    			id: channel.id ,
 						    			name : channel.name ,
 						    		}
-						    		listedChannels.push(channel);
+						    		listedChannels.push(c);
 						    	}						    		
 						    } 
 						});
 						//message.channel.send(`You have access to: ${listedChannels.join(',')}`);
-						console.log(listedChannels);
+						console.log(c);
 
 					}else{
+						var input = args[0];
+						switch(command){
+							case 'on':
+								var webhookname = "小馬怪通知";
+								// This will create the webhook with the name "Example Webhook" and an example avatar.
+								message.channel.createWebhook(webhookname, "https://i.imgur.com/P4yamS3.jpg")
+								// This will actually set the webhooks avatar, as mentioned at the start of the guide.
+								.then(webhook => webhook.edit(webhookname, "https://i.imgur.com/P4yamS3.jpg")
+								// This will get the bot to DM you the webhook, if you use this in a selfbot,
+								// change it to a console.log as you cannot DM yourself
+								.then(wb => {
+									message.channel.send(`Here is your webhook https://canary.discordapp.com/api/webhooks/${wb.id}/${wb.token}`)	
+								}).catch(console.error));
+
+								break;
+							case 'off':
+
+								break;
+						}
+
 
 					}
 
