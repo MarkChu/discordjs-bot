@@ -328,7 +328,9 @@ client.on('message', message => {
 					    			sn ++;
 					    			var s = rtn[0];
 					    			var c = rtn[1];
-					    			msg.push(sn+".伺服器:"+s.name+",頻道:"+c.name+":"+(row.ison=="Y"?"啟用":"停用"));
+					    			var str =sn+".伺服器:"+s.name+",頻道:"+c.name+":"+(row.ison=="Y"?"啟用":"停用"); 
+					    			console.log(str);
+					    			msg.push(str);
 					    		})
 					    		.catch(console.error);
 					    		//console.log(server);
