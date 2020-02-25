@@ -308,7 +308,7 @@ client.on('message', message => {
 					var cid = message.channel.id;
 
 					if (!args.length) {
-
+						//無參數
 						//console.log("show notify..");
 						var sqlstr = "select server,channel,wbname,ison ";			    
 							sqlstr += "from tblChannelWebhook ";
@@ -329,7 +329,7 @@ client.on('message', message => {
 					    			sn ++;
 					    			var s = rtn[0];
 					    			var c = rtn[1];
-					    			var str =sn+".伺服器:"+s.name+",頻道:"+c.name+":"+(row.ison=="Y"?"啟用":"停用"); 
+					    			var str =sn+".伺服器:【"+s.name+"】,頻道:【"+c.name+"】:"+(row.ison=="Y"?"啟用":"停用"); 
 					    			//console.log(str);
 					    			msg.push(str);
 					    		})
@@ -359,27 +359,9 @@ client.on('message', message => {
 							}
 							a();
 						});
-						/*
-						const listedChannels = []; 
-						message.guild.channels.forEach(channel => { 
-						    if(channel.permissionsFor(message.author).has('VIEW_CHANNEL')){
-						    	if(channel.type==="text"){
-						    		var c = {
-						    			server : sid ,
-						    			id: channel.id ,
-						    			name : channel.name ,
-						    		};
-						    		listedChannels.push(c);
-						    	}						    		
-						    } 
-						});
-						//message.channel.send(`You have access to: ${listedChannels.join(',')}`);
-						console.log(c);
-						*/
-						
-
 
 					}else{
+						//有參數
 						var input = args[0];
 						switch(input){
 							case 'del':
