@@ -241,7 +241,7 @@ function listboss(){
 			var row = recordset[i];
 			msgcontent += "【" + row.bossid + " - 預計時間:"+row.reborn+" - 距離現在："+ row.dues +"分鐘】\n";
 			
-			//message.author.send(msgcontent);						
+			//message.channel.send(msgcontent);						
 		}
 		if(msgcontent!=""){
 			Hook.info("小馬怪",msgcontent);	
@@ -313,7 +313,7 @@ client.on('message', message => {
 		    if(result.length>0){
 			    Object.keys(result).forEach(function(key) {
 			    	var row = result[key];
-			    	message.author.send( authorname +" ,您已經註冊過了喔!!目前有效期間至 "+row.limitdate+"。" );
+			    	message.channel.send( authorname +" ,您已經註冊過了喔!!目前有效期間至 "+row.limitdate+"。" );
 			    });  	
 		    }else{
 
@@ -328,7 +328,7 @@ client.on('message', message => {
 				  var sql2 = mysql.format('INSERT INTO tblUserBoss (userid,bossid) SELECT ?,bossid FROM tblboss;',[q_authorid]);				  
 				  exec_sql(sql1).then(function(rtn1){
 				  	exec_sql(sql2).then(function(rtn2){
-				  		message.author.send(authorname +" ,使用者註冊成功!!");
+				  		message.channel.send(authorname +" ,使用者註冊成功!!");
 				  	});
 				  });
 
@@ -615,19 +615,19 @@ client.on('message', message => {
 						var msg = "參數輸入錯誤, "+message.author+"!\n";
 						msg += "輸入方式如下：\n";
 						msg += prefix+"maintain 日期時間：維護時間，全部的王的重生時間重置。";
-						message.author.send(msg);
+						message.channel.send(msg);
 					}else{
 
 						var input_time = args[0];
 						var fixtime = "";
 
 						if(input_time.length!=12){
-							message.author.send("時間輸入範例如: 2019/12/10 11:50 轉換成 201912101150");
+							message.channel.send("時間輸入範例如: 2019/12/10 11:50 轉換成 201912101150");
 							break;
 						}else{
 							fixtime += input_time.substr(0,4) +"/"+input_time.substr(4,2)+"/"+input_time.substr(6,2)+" "+input_time.substr(8,2)+":"+input_time.substr(10,2);
 							if(isNaN(Date.parse(fixtime))){
-								message.author.send("時間輸入範例如: 2019/12/10 11:50 轉換成 201912101150");
+								message.channel.send("時間輸入範例如: 2019/12/10 11:50 轉換成 201912101150");
 								break;	
 							}
 							//console.log(killtime);	
@@ -641,7 +641,7 @@ client.on('message', message => {
 
 						pool.query(update_sql, function (error, results, fields) {
 						  if (error) handleError(error);
-						  message.author.send(message.author+",野王重生時間已全部重置!!");
+						  message.channel.send(message.author+",野王重生時間已全部重置!!");
 						})
 
 					}
@@ -660,7 +660,7 @@ client.on('message', message => {
 						var msg = "參數輸入錯誤, "+message.author+"!\n";
 						msg += "輸入方式如下：\n";
 						msg += prefix+"reset 野王編號 ：清空重生時間。";
-						message.author.send(msg);
+						message.channel.send(msg);
 
 					}else{
 
@@ -687,11 +687,11 @@ client.on('message', message => {
 
 								pool.query(update_sql, function (error, results, fields) {
 								  if (error) handleError(error);
-								  message.author.send(message.author+",野王編號 【"+bossid+"】 已清空!!");
+								  message.channel.send(message.author+",野王編號 【"+bossid+"】 已清空!!");
 								})
 						    });  	
 						    if(isNotExist){
-						    	message.author.send(message.author+",野王編號 【"+bossid+"】 此編號不存在。請重新輸入!!");
+						    	message.channel.send(message.author+",野王編號 【"+bossid+"】 此編號不存在。請重新輸入!!");
 						    }				    	
 
 						});
@@ -712,7 +712,7 @@ client.on('message', message => {
 						msg += "輸入方式如下：\n";
 						msg += prefix+"kill 野王編號 ：更新擊殺野王的時間，會使用系統時間-3分鐘。\n";
 						msg += prefix+"kill 野王編號 日期時間：更新擊殺野王的時間，時間輸入範例如: 2019/12/10 11:50 轉換成 201912101150 。";
-						message.author.send(msg);
+						message.channel.send(msg);
 
 					}else{
 
@@ -722,12 +722,13 @@ client.on('message', message => {
 						if(args.length>1){
 							input_time = args[1];
 							if(input_time.length!=12){
-								message.author.send("時間輸入範例如: 2019/12/10 11:50 轉換成 201912101150");
+								message.channel.send("時間輸入範例如: 2019/12/10 11:50 轉換成 201912101150");
 								break;
 							}else{
 								killtime += input_time.substr(0,4) +"/"+input_time.substr(4,2)+"/"+input_time.substr(6,2)+" "+input_time.substr(8,2)+":"+input_time.substr(10,2);
 								if(isNaN(Date.parse(killtime))){
-									message.author.send("時間輸入範例如: 2019/12/10 11:50 轉換成 201912101150");
+									message.channel.send("時間輸入範例如: 2019/12/10 11:50 轉換成 201912101150");
+									//message.author.send
 									break;	
 								}
 								//console.log(killtime);	
@@ -768,7 +769,7 @@ client.on('message', message => {
 					        	if(cnt>0){
 					        		update_sql = mysql.format('UPDATE tblUserBoss SET killtime = ? ,reborntime = ? WHERE userid= ? and bossid = ? ', [q_kill, q_reborn , q_userid , q_bossid ]);
 					        		//同步更新tblBoss時間
-					        		update_sql = mysql.format('UPDATE tblBoss SET killtime = ? ,reborntime = ? WHERE bossid = ? ', [q_kill, q_reborn , q_bossid ]);
+					        		update_sql = mysql.format('UPDATE tblboss SET killtime = ? ,reborntime = ? WHERE bossid = ? ', [q_kill, q_reborn , q_bossid ]);
 					        	}else{
 					        		update_sql = mysql.format('INSERT tblUserBoss (bossid,userid,killtime,reborntime) VALUES (?, ?, ?, ?) ', [q_bossid, q_userid, q_kill, q_reborn   ]);
 					        	}
@@ -776,12 +777,12 @@ client.on('message', message => {
 
 								pool.query(update_sql, function (error, results, fields) {
 								  if (error) handleError(error);
-								  message.author.send(message.author+",野王編號 【"+bossid+"】 下次重生時間已更新!!");
+								  message.channel.send(message.author+",野王編號 【"+bossid+"】 下次重生時間已更新!!");
 								})
 
 						    });
 						    if(isNotExist){
-						    	message.author.send(message.author+",野王編號 【"+bossid+"】 此編號不存在。請重新輸入!!");
+						    	message.channel.send(message.author+",野王編號 【"+bossid+"】 此編號不存在。請重新輸入!!");
 						    }
 						});
 
@@ -830,18 +831,18 @@ client.on('message', message => {
 							}							
 							msgcontent += "【野王編號： " +row.bossname + " "+ row.bossid + "("+rank+")" + " - 前次擊殺時間： "+(row.killed == null ? "無":row.killed) + " - 重生間格："+ row.cycletime +"小時 - 預計出現時間： "+(row.reborn == null ? "無":row.reborn) +" 】\n";
 							
-							//message.author.send(msgcontent);						
+							//message.channel.send(msgcontent);						
 						}
 						if(msgcontent!=""){
-							message.author.send(msgcontent);	
+							message.channel.send(msgcontent);	
 						}else{
-							message.author.send("目前沒有記錄喔!!");	
+							message.channel.send("目前沒有記錄喔!!");	
 						}
 						//console.log(msgcontent);
 
 					});
 
-					//message.author.send('test!');
+					//message.channel.send('test!');
 					break;
 
 				case 'boss':
@@ -884,18 +885,18 @@ client.on('message', message => {
 							}
 							msgcontent += "【" + row.bossid +" "+ row.bossname + " ("+rank+") 在 "+row.location+" ，" + " - 預計時間:"+row.reborn+" - 距離現在："+ row.dues +"分鐘】\n";
 							
-							//message.author.send(msgcontent);						
+							//message.channel.send(msgcontent);						
 						}
 						if(msgcontent!=""){
-							message.author.send(msgcontent);	
+							message.channel.send(msgcontent);	
 						}else{
-							message.author.send("目前的野王都沒有擊殺記錄喔!!");	
+							message.channel.send("目前的野王都沒有擊殺記錄喔!!");	
 						}
 						//console.log(msgcontent);
 
 					});
 
-					//message.author.send('test!');
+					//message.channel.send('test!');
 					break;
 				default:
 					message.channel.send('您可以輸入 ^help 查看指令.');
@@ -933,7 +934,7 @@ function checkuser(authid,fncallback){
 		if(logstat){
 			fncallback(logstat)
 		}else{
-			message.author.send(logstat);		
+			message.channel.send(logstat);		
 			return;
 		}
 	});
