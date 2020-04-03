@@ -96,19 +96,21 @@ function channelnotify(fnuserid,fnmsg){
 		sqlstr += "and ison='Y' ";
 		sqlstr += "and channel>'' and wbtoken>'' ";
 		sqlstr += "order by create_date ";
-	console.log(sqlstr);
+	//console.log(sqlstr);
 	query_sql(sqlstr).then(function(rtn){	
 		Object.keys(rtn).forEach(function(key) {
 			var row = rtn[key];
 
-			const webhookClient = new Discord.WebhookClient(row.wbid , row.wbtoken );
-
+			var webhookClient = new Discord.WebhookClient(row.wbid , row.wbtoken );
+			console.log(webhookClient);
 			try {
+				/*
 				webhookClient.send('Webhook test', {
 					username: '小馬怪',
 					//avatarURL: 'https://i.imgur.com/wSTFkRM.png',
 					embeds: fnmsg,
 				});
+				*/
 			} catch (error) {
 				console.error('Error trying to send: ', error);
 			}
