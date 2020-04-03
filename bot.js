@@ -285,6 +285,9 @@ client.on('message', message => {
 		.addField(prefix+"maintain 日期時間", '維護時間，全部的王的重生時間重置。')
 		.addField(prefix+"notify", '顯示目前的設置的頻道通知狀態。')
 		.addField(prefix+"notify add", '將目前所在頻道加入頻道通知。')
+		.addField(prefix+"notify del", '將目前所在頻道通知刪除。')
+		.addField(prefix+"notify on", '啟用目前所在的頻道通知。')
+		.addField(prefix+"notify off", '停用目前所在的頻道通知。')		
 		.addField(prefix+"notify allon", '啟用所有設定過的頻道通知。')
 		.addField(prefix+"notify alloff", '停用所有設定過的頻道通知。')
 		.setTimestamp();
@@ -764,6 +767,8 @@ client.on('message', message => {
 
 					        	if(cnt>0){
 					        		update_sql = mysql.format('UPDATE tblUserBoss SET killtime = ? ,reborntime = ? WHERE userid= ? and bossid = ? ', [q_kill, q_reborn , q_userid , q_bossid ]);
+					        		//同步更新tblBoss時間
+					        		update_sql = mysql.format('UPDATE tblBoss SET killtime = ? ,reborntime = ? WHERE bossid = ? ', [q_kill, q_reborn , q_bossid ]);
 					        	}else{
 					        		update_sql = mysql.format('INSERT tblUserBoss (bossid,userid,killtime,reborntime) VALUES (?, ?, ?, ?) ', [q_bossid, q_userid, q_kill, q_reborn   ]);
 					        	}
