@@ -99,10 +99,24 @@ function channelnotify(fnuserid,fnmsg){
 	console.log(sqlstr);
 	query_sql(sqlstr).then(function(rtn){	
 		Object.keys(rtn).forEach(function(key) {
-		    var row = rtn[key];
-			var theHook = new webhook.Webhook("https://discordapp.com/api/webhooks/"+row.channel+"/"+row.wbtoken);
-			console.log(theHook);
-			theHook.info("小馬怪",fnmsg);	
+			var row = rtn[key];
+
+			const webhookClient = new Discord.WebhookClient(row.wbid , row.wbtoken );
+
+			try {
+				webhookClient.send('Webhook test', {
+					username: '小馬怪',
+					//avatarURL: 'https://i.imgur.com/wSTFkRM.png',
+					embeds: fnmsg,
+				});
+			} catch (error) {
+				console.error('Error trying to send: ', error);
+			}
+
+		    //var row = rtn[key];
+			//var theHook = new webhook.Webhook("https://discordapp.com/api/webhooks/"+row.channel+"/"+row.wbtoken);
+			//console.log(theHook);
+			//theHook.info("小馬怪",fnmsg);	
 		});	
 	});
 
@@ -492,7 +506,7 @@ client.on('message', message => {
 								//console.log(sql);
 							  	exec_sql(sql).then(function(rtn2){
 							  		message.channel.send(message.author+",您的所有頻道通知已全部停用。如要啟用請使用^notify on.");
-							  		channelnotify(authorid,"您的所有頻道通知已全部停用。如要啟用請使用^notify on.");
+							  		//channelnotify(authorid,"您的所有頻道通知已全部停用。如要啟用請使用^notify on.");
 							  	});		
 
 								break;

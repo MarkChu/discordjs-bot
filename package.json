@@ -16,6 +16,6 @@
     "mysql": "^2.17.1",
     "mysql2": "^2.0.2",
     "node-schedule": "^1.3.2",
-    "webhook-discord": "^3.5.1"
+    "webhook-discord": "^3.6.0"
   }
 }
