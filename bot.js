@@ -99,6 +99,9 @@ function checkboss(){
 		sqlstr += ",(select cycletime from tblboss z where z.bossid=a.bossid) cycletime ";
 		sqlstr += ",(select bossimg from tblboss z where z.bossid=a.bossid) bossimg ";
 		sqlstr += ",(select rank FROM tblboss z WHERE z.bossid=a.bossid) rank ";
+		sqlstr += ",(select bossname FROM tblboss z WHERE z.bossid=a.bossid) bossname ";
+		sqlstr += ",(select location FROM tblboss z WHERE z.bossid=a.bossid) location ";
+		sqlstr += ",(select lv FROM tblboss z WHERE z.bossid=a.bossid) lv ";		
 		sqlstr += "from tblUserBoss a ";
 		sqlstr += "where reborntime IS NOT null ";
 		sqlstr += "and TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime )  in (0 ,5 ,10) ";
@@ -126,7 +129,7 @@ function checkboss(){
 					break;
 			}
 
-        	var msgcontent = "野王出沒通知：【" + row.bossid + "("+rank+")" +  "】";
+        	var msgcontent = "野王出沒通知：【" + row.bossid +" "+ row.bossname + " ("+rank+") 在 "+row.location+ "】";
         	//console.log(row);
         	if(parseInt(row.dues)==0){
         		msgcontent += " 目前已經重生，趕快去吃王吧!!";
@@ -139,6 +142,8 @@ function checkboss(){
         	msg.setColor("#ff0000")
             .setTitle(msgcontent)
             .addField("野王編號", row.bossid + "("+rank+")" )
+            .addField("野王名稱", row.bossname )
+            .addField("出現地區", row.location )
             .addField("預計出現時間", row.reborn )
             .addField("重生時間", row.cycletime + " 小時");
 
