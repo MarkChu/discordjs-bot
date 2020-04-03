@@ -769,7 +769,7 @@ client.on('message', message => {
 					        	if(cnt>0){
 					        		update_sql = mysql.format('UPDATE tblUserBoss SET killtime = ? ,reborntime = ? WHERE userid= ? and bossid = ? ', [q_kill, q_reborn , q_userid , q_bossid ]);
 					        		//同步更新tblBoss時間
-					        		update_sql = mysql.format('UPDATE tblboss SET killtime = ? ,reborntime = ? WHERE bossid = ? ', [q_kill, q_reborn , q_bossid ]);
+					        		//update_sql = mysql.format('UPDATE tblboss SET killtime = ? ,reborntime = ? WHERE bossid = ? ', [q_kill, q_reborn , q_bossid ]);
 					        	}else{
 					        		update_sql = mysql.format('INSERT tblUserBoss (bossid,userid,killtime,reborntime) VALUES (?, ?, ?, ?) ', [q_bossid, q_userid, q_kill, q_reborn   ]);
 					        	}
@@ -779,6 +779,15 @@ client.on('message', message => {
 								  if (error) handleError(error);
 								  message.channel.send(message.author+",野王編號 【"+bossid+"】 下次重生時間已更新!!");
 								})
+
+
+								update_sql1 = mysql.format('UPDATE tblboss SET killtime = ? ,reborntime = ? WHERE bossid = ? ', [q_kill, q_reborn , q_bossid ]);								
+
+								pool.query(update_sql1, function (error, results, fields) {
+								  if (error) handleError(error);
+								})
+
+
 
 						    });
 						    if(isNotExist){
