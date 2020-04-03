@@ -195,11 +195,12 @@ function checkboss(){
 
 			Promise.race([
 			  getuser(row.userid),
-			  timeoutPromise(3000)
+			  timeoutPromise(3000),
 			])
 			.then(
 			  function(user) {
 			    user.sendEmbed(msg);
+			    channelnotify(user.id,msg);
 			  },
 			  function(err) {
 			    // 可能是被拒絕或擱置超過 3 秒
@@ -282,10 +283,10 @@ client.on('message', message => {
 		.addField(prefix+"kill 野王編號 日期時間", '更新擊殺野王的時間，時間輸入範例如: 2019/12/10 11:50 轉換成 201912101150 。')
 		.addField(prefix+"reset 野王編號", '清空特定野王的擊殺時間與重生時間。')
 		.addField(prefix+"maintain 日期時間", '維護時間，全部的王的重生時間重置。')
-		//.addField(prefix+"notify", '顯示目前的設置的頻道通知狀態。')
-		//.addField(prefix+"notify add", '將目前所在頻道加入頻道通知。')
-		//.addField(prefix+"notify on", '啟用所有設定過的頻道通知。')
-		//.addField(prefix+"notify off", '停用所有設定過的頻道通知。')
+		.addField(prefix+"notify", '顯示目前的設置的頻道通知狀態。')
+		.addField(prefix+"notify add", '將目前所在頻道加入頻道通知。')
+		.addField(prefix+"notify allon", '啟用所有設定過的頻道通知。')
+		.addField(prefix+"notify alloff", '停用所有設定過的頻道通知。')
 		.setTimestamp();
 		message.channel.send(exampleEmbed);
 
@@ -503,6 +504,36 @@ client.on('message', message => {
 								break;
 							case 'off':
 								var q_userid = mysql.raw("'"+authorid+"'");
+								var q_sid = mysql.raw("'"+sid+"'");
+								var q_cid = mysql.raw("'"+cid+"'");	
+
+								var update_sql = "UPDATE tblChannelWebhook SET ison='N' WHERE userid = ? and server= ? and channel = ? ; ";
+								var sql = mysql.format(update_sql , [q_userid,q_sid,q_cid] );
+
+								exec_sql(sql).then(function(rtn){
+							  		message.channel.send(message.author+",目前此頻道:【"+message.channel.name+"】 頻道通知已停用!!");
+							  		return;
+							  	});		
+
+								break;
+							case 'on':
+
+								var q_userid = mysql.raw("'"+authorid+"'");
+								var q_sid = mysql.raw("'"+sid+"'");
+								var q_cid = mysql.raw("'"+cid+"'");	
+
+								var update_sql = "UPDATE tblChannelWebhook SET ison='Y' WHERE userid = ? and server= ? and channel = ? ; ";
+								var sql = mysql.format(update_sql , [q_userid,q_sid,q_cid] );
+									
+								exec_sql(sql).then(function(rtn){
+							  		message.channel.send(message.author+",目前此頻道:【"+message.channel.name+"】 頻道通知已啟用!!");
+							  		return;
+							  	});
+
+								break;								
+
+							case 'alloff':
+								var q_userid = mysql.raw("'"+authorid+"'");
 
 								var update_sql = "UPDATE tblChannelWebhook SET ison='N' WHERE userid = ? ; ";
 								var sql = mysql.format(update_sql , [q_userid] );
@@ -513,7 +544,7 @@ client.on('message', message => {
 							  	});		
 
 								break;
-							case 'on':
+							case 'allon':
 								var q_userid = mysql.raw("'"+authorid+"'");
 
 								var update_sql = "UPDATE tblChannelWebhook SET ison='Y' WHERE userid = ? ; ";
@@ -533,7 +564,10 @@ client.on('message', message => {
 							  		channelnotify(authorid,msg);
 							  	});		
 
-								break;								
+								break;	
+
+
+
 						}
 
 
