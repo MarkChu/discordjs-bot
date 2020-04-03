@@ -742,7 +742,9 @@ client.on('message', message => {
 						sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
 						sqlstr += ",(select cycletime FROM tblboss z WHERE z.bossid=a.bossid) cycletime ";
 						sqlstr += ",(select rank FROM tblboss z WHERE z.bossid=a.bossid) rank ";
-						sqlstr += ",bossname,location,lv ";
+						sqlstr += ",(select bossname FROM tblboss z WHERE z.bossid=a.bossid) bossname ";
+						sqlstr += ",(select location FROM tblboss z WHERE z.bossid=a.bossid) location ";
+						sqlstr += ",(select lv FROM tblboss z WHERE z.bossid=a.bossid) lv ";
 						sqlstr += "from tblUserBoss a ";
 						sqlstr += "where userid = '"+authorid+"'";
 						sqlstr += "and reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
