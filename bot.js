@@ -953,6 +953,9 @@ client.on('message', message => {
 						msg.setTitle("第"+mapi+"區BOSS清單");
 
 
+
+
+
 						pool.query(sqlstr, function(err, rows, fields) {
 						    if (err) handleError(err);
 						    	
@@ -977,17 +980,19 @@ client.on('message', message => {
 										rank = "紫";
 										break;
 								}							
-								msgcontent = "【野王編號： " +row.bossname + " "+ row.bossid + "("+rank+")  在 "+row.location+" - 前次擊殺時間： "+(row.killed == null ? "無":row.killed) + " - 重生間格："+ row.cycletime +"小時 - 預計出現時間： "+(row.reborn == null ? "無":row.reborn) +" 】\n";
-								msg.addField(msgcontent);
+								msgcontent = "【野王： " +row.bossname + " ("+rank+")  在 "+row.location+" - 前次擊殺時間： "+(row.killed == null ? "無":row.killed) + " - 重生間格："+ row.cycletime +"小時 - 預計出現時間： "+(row.reborn == null ? "無":row.reborn) +" 】\n";
+								msg.addField(row.bossid,msgcontent);
 								//message.channel.send(msgcontent);						
 							}
 
 							msg.setTimestamp();
 
 							if(rows>0){
-								message.channel.send(msg);	
+								setTimeout(function(){
+									message.channel.send(msg);	
+								},mapi*200);
 							}else{
-								message.channel.send("目前沒有記錄喔!!");	
+								//message.channel.send("目前沒有記錄喔!!");	
 							}
 							//console.log(msgcontent);
 
