@@ -172,34 +172,12 @@ function channelallnotify(fnmsg){
 			var row = rtn[key];
 
 
-
 			hooksend(row.wbid , row.wbtoken , fnmsg)
 			.then(rtn => {
 				console.log(rtn);
 			})
 			.catch(console.error);
 
-
-			/*
-			var webhookClient = new Discord.WebhookClient(row.wbid , row.wbtoken );
-			//console.log(webhookClient);
-			try {
-				
-				await webhookClient.send('', {
-					username: '小馬怪',
-					//avatarURL: 'https://i.imgur.com/wSTFkRM.png',
-					embeds: [fnmsg],
-				});
-				
-			} catch (error) {
-				console.error('Error trying to send: ', error);
-			}
-			*/
-	
-		    //var row = rtn[key];
-			//var theHook = new webhook.Webhook("https://discordapp.com/api/webhooks/"+row.channel+"/"+row.wbtoken);
-			//console.log(theHook);
-			//theHook.info("小馬怪",fnmsg);	
 		});	
 	});
 
