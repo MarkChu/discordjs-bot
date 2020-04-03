@@ -639,7 +639,7 @@ client.on('message', message => {
 						}
 					
 						var sqlstr = "select uniqid ";
-							sqlstr += "(select count(*) from tblUserBoss z where z.bossid=a.bossid) cnt ";		    
+							sqlstr += ",(select count(*) from tblUserBoss z where z.bossid=a.bossid) cnt ";		    
 							sqlstr += "from tblboss a ";
 							sqlstr += "where bossid='"+bossid+"'";
 						
