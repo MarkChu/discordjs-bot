@@ -320,7 +320,12 @@ client.on('message', message => {
 						isok = false;
 					}
 
-					if (!args.length && isok) {
+					if(!isok){
+						console.log("error:no message guild id");
+						return ;
+					}
+
+					if (!args.length) {
 						//無參數
 						//console.log("show notify..");
 						var sqlstr = "select server,channel,wbname,ison ";			    
