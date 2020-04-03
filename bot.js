@@ -42,6 +42,7 @@ client.once('ready', () => {
 	  checkboss_channel();
 	});
 
+	testnotify();
 	/*
 	var j1 = schedule.scheduleJob('0 0 * * * *', function(){
 	  //每到0分時執行一次(每小時)
@@ -127,6 +128,36 @@ function channelnotify(fnuserid,fnmsg){
 }
 
 
+function testnotify(){
+	const msg = new Discord.RichEmbed();
+	msg.setColor("#ff0000")
+    .setTitle("測試訊息")
+    .setTimestamp();
+
+
+	var sqlstr = "select uniqid,server,channel,wbname,wbid,wbtoken ";			    
+		sqlstr += "from tblChannelWebhook ";
+		sqlstr += "where ison='Y' ";
+		sqlstr += "and channel>'' and wbtoken>'' ";
+		sqlstr += "order by create_date ";
+	//console.log(sqlstr);
+	query_sql(sqlstr).then(function(rtn){	
+		Object.keys(rtn).forEach(function(key) {
+			var row = rtn[key];
+
+			hooksend(row.wbid , row.wbtoken , msg)
+			.then(rtn => {
+				console.log(row.uniqid);
+				console.log(rtn);
+			})
+			.catch(console.error);
+
+		});	
+	});
+
+}
+
+
 
 function channelallnotify(fnmsg){
 
@@ -171,7 +202,6 @@ function channelallnotify(fnmsg){
 			//theHook.info("小馬怪",fnmsg);	
 		});	
 	});
-
 
 }
 
