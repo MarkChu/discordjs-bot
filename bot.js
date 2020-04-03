@@ -999,8 +999,8 @@ client.on('message', message => {
 										rank = "紫";
 										break;
 								}
-								var msgtitle = row.bossid+" "+row.bossname_kr+" "+row.bossname + " ("+rank+") ";							
-								var msgcontent = "地點："+row.location_kr+" "+row.location+"\n";
+								var msgtitle = row.bossid+" "+row.bossname_kr + (row.bossname!=row.bossname_kr?" "+row.bossname:"") + " ("+rank+") ";							
+								var msgcontent = "地點："+row.location_kr+(row.location!=row.location_kr?" "+row.location:"")+"\n";
 									msgcontent += "前次擊殺時間："+(row.killed == null ? "無":row.killed) + " \n";
 									if(row.cycletime==null){
 										msgcontent += "重生間格：隨機\n";
