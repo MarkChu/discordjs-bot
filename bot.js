@@ -781,10 +781,13 @@ client.on('message', message => {
 								})
 
 
-								update_sql1 = mysql.format('UPDATE tblboss SET killtime = ? ,reborntime = ? WHERE bossid = ? ', [q_kill, q_reborn , q_bossid ]);								
+								var update_sql1 = mysql.format('UPDATE tblboss SET killtime = ? ,reborntime = ? WHERE bossid = ? ', [q_kill, q_reborn , q_bossid ]);								
 
 								pool.query(update_sql1, function (error, results, fields) {
-								  if (error) handleError(error);
+								  if (error){
+								  	handleError(error);
+								  	console.log(update_sql1);
+								  } 
 								})
 
 
