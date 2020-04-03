@@ -948,6 +948,10 @@ client.on('message', message => {
 							sqlstr += "from tblboss a ";
 							sqlstr += "where bossid like '"+mapi+"-%' ";
 							sqlstr += "order by 1 ";	
+						const msg = new Discord.RichEmbed();
+						msg.setColor("#0099ff");
+						msg.setTitle("第"+mapi+"區BOSS清單");
+
 
 						pool.query(sqlstr, function(err, rows, fields) {
 						    if (err) handleError(err);
@@ -955,9 +959,7 @@ client.on('message', message => {
 							var recordset = rows;
 							var msgcontent = "";
 							var rows = 0;
-							const msg = new Discord.RichEmbed();
-							msg.setColor("#0099ff");
-							msg.setTitle("第"+mapi+"區BOSS清單");
+
 
 							for(i=0;i<recordset.length;i++)
 							{
@@ -979,6 +981,9 @@ client.on('message', message => {
 								msg.addField(msgcontent);
 								//message.channel.send(msgcontent);						
 							}
+
+							msg.setTimestamp();
+
 							if(rows>0){
 								message.channel.send(msg);	
 							}else{
