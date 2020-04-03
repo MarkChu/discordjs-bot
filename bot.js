@@ -96,10 +96,12 @@ function channelnotify(fnuserid,fnmsg){
 		sqlstr += "and ison='Y' ";
 		sqlstr += "and channel>'' and wbtoken>'' ";
 		sqlstr += "order by create_date ";
+	console.log(sqlstr);
 	query_sql(sqlstr).then(function(rtn){	
 		Object.keys(rtn).forEach(function(key) {
 		    var row = rtn[key];
 			var theHook = new webhook.Webhook("https://discordapp.com/api/webhooks/"+row.channel+"/"+row.wbtoken);
+			console.log(theHook);
 			theHook.info("小馬怪",fnmsg);	
 		});	
 	});
