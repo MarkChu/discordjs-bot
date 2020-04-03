@@ -684,6 +684,7 @@ client.on('message', message => {
 						sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
 						sqlstr += ",(select cycletime FROM tblboss z WHERE z.bossid=a.bossid) cycletime ";
 						sqlstr += ",(select rank FROM tblboss z WHERE z.bossid=a.bossid) rank ";
+						sqlstr += ",(select bossname FROM tblboss z WHERE z.bossid=a.bossid) bossname ";
 						sqlstr += "from tblUserBoss a ";
 						sqlstr += "where userid = '"+authorid+"'";
 						sqlstr += "order by 1 ";	
@@ -709,7 +710,7 @@ client.on('message', message => {
 									rank = "紫";
 									break;
 							}							
-							msgcontent += "【野王編號： " + row.bossid + "("+rank+")" + " - 前次擊殺時間： "+(row.killed == null ? "無":row.killed) + " - 重生間格："+ row.cycletime +"小時 - 預計出現時間： "+(row.reborn == null ? "無":row.reborn) +" 】\n";
+							msgcontent += "【野王編號： " +row.bossname + " "+ row.bossid + "("+rank+")" + " - 前次擊殺時間： "+(row.killed == null ? "無":row.killed) + " - 重生間格："+ row.cycletime +"小時 - 預計出現時間： "+(row.reborn == null ? "無":row.reborn) +" 】\n";
 							
 							//message.author.send(msgcontent);						
 						}
