@@ -934,15 +934,17 @@ client.on('message', message => {
 				case 'bossall':
 
 
-					var sqlstr = "select bossid ";			    
+					var sqlstr = "select bossid,imgurl ";			    
 						sqlstr += ",left(convert(killtime,DATETIME),16) as killed ";
 						sqlstr += ",left(convert(reborntime,DATETIME),16) as reborn ";
 						sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
-						sqlstr += ",(select cycletime FROM tblboss z WHERE z.bossid=a.bossid) cycletime ";
-						sqlstr += ",(select rank FROM tblboss z WHERE z.bossid=a.bossid) rank ";
-						sqlstr += ",(select bossname FROM tblboss z WHERE z.bossid=a.bossid) bossname ";
-						sqlstr += "from tblUserBoss a ";
-						sqlstr += "where userid = '"+authorid+"'";
+						sqlstr += ",cycletime ";
+						sqlstr += ",bossimg  ";
+						sqlstr += ",rank  ";
+						sqlstr += ",bossname  ";
+						sqlstr += ",location ";
+						sqlstr += ",lv ";	
+						sqlstr += "from tblboss a ";
 						sqlstr += "order by 1 ";	
 
 					pool.query(sqlstr, function(err, rows, fields) {
