@@ -979,7 +979,14 @@ client.on('message', message => {
 										break;
 								}
 								var msgtitle = row.bossid+" "+row.bossname+" ("+rank+") ";							
-								var msgcontent = "地點 "+row.location+" \n前次擊殺時間： "+(row.killed == null ? "無":row.killed) + " \n重生間格："+ row.cycletime +"小時\n預計出現時間： "+(row.reborn == null ? "無":row.reborn) +" \n";
+								var msgcontent = "地點 "+row.location+"\n";
+									msgcontent += "前次擊殺時間： "+(row.killed == null ? "無":row.killed) + " \n";
+									if(row.cycletime==null){
+										msgcontent += "重生間格：隨機\n";
+									}else{
+										msgcontent += "重生間格："+ row.cycletime +"小時\n";
+										msgcontent += "預計出現時間： "+(row.reborn == null ? "無":row.reborn) +" \n";										
+									}
 								msg.addField(msgtitle,msgcontent);
 								//message.channel.send(msgcontent);						
 							}
