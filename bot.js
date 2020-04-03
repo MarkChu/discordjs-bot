@@ -38,7 +38,8 @@ client.once('ready', () => {
 
 	var j = schedule.scheduleJob('0 * * * * *', function(){
 	  //每到0秒時執行一次(每分鐘)
-	  checkboss();
+	  //checkboss();
+	  checkboss_channel();
 	});
 
 	/*
@@ -126,6 +127,123 @@ function channelnotify(fnuserid,fnmsg){
 }
 
 
+
+function channelallnotify(fnmsg){
+
+	var sqlstr = "select uniqid,server,channel,wbname,wbid,wbtoken ";			    
+		sqlstr += "from tblChannelWebhook ";
+		sqlstr += "where ison='Y' ";
+		sqlstr += "and channel>'' and wbtoken>'' ";
+		sqlstr += "order by create_date ";
+	//console.log(sqlstr);
+	query_sql(sqlstr).then(function(rtn){	
+		Object.keys(rtn).forEach(function(key) {
+			var row = rtn[key];
+
+			var webhookClient = new Discord.WebhookClient(row.wbid , row.wbtoken );
+			//console.log(webhookClient);
+			try {
+				
+				webhookClient.send('', {
+					username: '小馬怪',
+					//avatarURL: 'https://i.imgur.com/wSTFkRM.png',
+					embeds: [fnmsg],
+				});
+				
+			} catch (error) {
+				console.error('Error trying to send: ', error);
+			}
+
+		    //var row = rtn[key];
+			//var theHook = new webhook.Webhook("https://discordapp.com/api/webhooks/"+row.channel+"/"+row.wbtoken);
+			//console.log(theHook);
+			//theHook.info("小馬怪",fnmsg);	
+		});	
+	});
+
+
+}
+
+
+function checkboss_channel(){
+	var sqlstr = "select bossid,imgurl ";			    
+		sqlstr += ",left(convert(killtime,DATETIME),16) as killed ";
+		sqlstr += ",left(convert(reborntime,DATETIME),16) as reborn ";
+		sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
+		sqlstr += ",cycletime ";
+		sqlstr += ",bossimg  ";
+		sqlstr += ",rank  ";
+		sqlstr += ",bossname  ";
+		sqlstr += ",location ";
+		sqlstr += ",lv ";		
+		sqlstr += "from tblboss a ";
+		sqlstr += "where reborntime IS NOT null ";
+		sqlstr += "and TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime )  in (0 ,5 ,10) ";
+		sqlstr += "order by 5 ";	
+
+	pool.query(sqlstr, function(err, rows, fields) {
+		if (err) handleError(err);
+	    
+		var recordset = rows;
+		var msgcontent = "";
+		for(i=0;i<recordset.length;i++)
+		{
+
+			var row = recordset[i];
+			var rank = "";
+			switch(row.rank){
+				case 'r':
+					rank = "紅";
+					break;
+				case 'b':
+					rank = "藍";
+					break;
+				case 'p':
+					rank = "紫";
+					break;
+			}
+
+        	var msgcontent = "野王出沒通知：【" + row.bossid +" "+ row.bossname + " ("+rank+") 在 "+row.location+ "】";
+        	//console.log(row);
+        	if(parseInt(row.dues)==0){
+        		msgcontent += " 目前已經重生，趕快去吃王吧!!";
+        	}else{
+        		msgcontent += " 距離出現還有 " + row.dues + "分鐘!!";
+        	}
+
+        	const msg = new Discord.RichEmbed();
+
+        	msg.setColor("#ff0000")
+            .setTitle(msgcontent)
+            .addField("野王編號", row.bossid + "("+rank+")" )
+            .addField("野王名稱", row.bossname )
+            .addField("出現地區", row.location )
+            .addField("預計出現時間", row.reborn )
+            .addField("重生時間", row.cycletime + " 小時");
+
+			if(row.imgurl!=null&&row.imgurl!=""){
+	            msg.setImage(row.imgurl)
+			}     
+
+			//if(row.bossimg!=null&&row.bossimg!=""){
+	        //    msg.setImage(row.bossimg)
+			//}        	
+	        msg.setTimestamp();
+
+
+			channelallnotify(msg);
+							
+		}
+
+
+	});
+
+
+
+}
+
+
+
 function checkboss(){
 
 	var sqlstr = "select bossid,userid,(select imgurl from tblboss z where z.bossid=a.bossid) imgurl ";			    
@@ -200,7 +318,7 @@ function checkboss(){
 			.then(
 			  function(user) {
 			    user.sendEmbed(msg);
-			    channelnotify(user.id,msg);
+			    //channelnotify(user.id,msg);
 			  },
 			  function(err) {
 			    // 可能是被拒絕或擱置超過 3 秒
@@ -867,18 +985,18 @@ client.on('message', message => {
 				case 'boss':
 
 
-					var sqlstr = "select bossid ";			    
+					var sqlstr = "select bossid,imgurl ";			    
 						sqlstr += ",left(convert(killtime,DATETIME),16) as killed ";
 						sqlstr += ",left(convert(reborntime,DATETIME),16) as reborn ";
 						sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
-						sqlstr += ",(select cycletime FROM tblboss z WHERE z.bossid=a.bossid) cycletime ";
-						sqlstr += ",(select rank FROM tblboss z WHERE z.bossid=a.bossid) rank ";
-						sqlstr += ",(select bossname FROM tblboss z WHERE z.bossid=a.bossid) bossname ";
-						sqlstr += ",(select location FROM tblboss z WHERE z.bossid=a.bossid) location ";
-						sqlstr += ",(select lv FROM tblboss z WHERE z.bossid=a.bossid) lv ";
-						sqlstr += "from tblUserBoss a ";
-						sqlstr += "where userid = '"+authorid+"'";
-						sqlstr += "and reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
+						sqlstr += ",cycletime ";
+						sqlstr += ",bossimg  ";
+						sqlstr += ",rank  ";
+						sqlstr += ",bossname  ";
+						sqlstr += ",location ";
+						sqlstr += ",lv ";		
+						sqlstr += "from tblboss a ";
+						sqlstr += "where reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
 						sqlstr += "order by 4 ";	
 
 					pool.query(sqlstr, function(err, rows, fields) {
