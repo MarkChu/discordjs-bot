@@ -1025,7 +1025,7 @@ client.on('message', message => {
 
 				case 'boss':
 
-					const bossmsg = new Discord.RichEmbed();
+					var bossmsg = new Discord.RichEmbed();
 					bossmsg.setTitle("待出BOSS清單");
 					bossmsg.setColor("#ff0000");
 
