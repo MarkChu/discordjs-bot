@@ -88,6 +88,24 @@ client.on("guildCreate", guild => {
 client.login(token);
 
 
+function channelnotify(fnuserid,fnmsg){
+
+	var sqlstr = "select uniqid,server,channel,wbname,wbid,wbtoken ";			    
+		sqlstr += "from tblChannelWebhook ";
+		sqlstr += "where userid='"+fnuserid+"'";
+		sqlstr += "and ison='Y' ";
+		sqlstr += "and channel>'' and wbtoken>'' ";
+		sqlstr += "order by create_date ";
+	query_sql(sqlstr).then(function(rtn){	
+		Object.keys(rtn).forEach(function(key) {
+		    var row = rtn[key];
+			var theHook = new webhook.Webhook("https://discordapp.com/api/webhooks/"+row.channel+"/"+row.wbtoken);
+			theHook.info("小馬怪",fnmsg);	
+		});	
+	});
+
+
+}
 
 
 function checkboss(){
@@ -421,12 +439,12 @@ client.on('message', message => {
 
 										Object.keys(rtn).forEach(function(key) {
 									      	var row = rtn[key];
-									 		message.channel.send(message.author+",您在此頻道:【"+message.channel.name+"】 已設定過通知!!");
+									 		message.channel.send(message.author+",您在此頻道:【 "+message.channel.name+" 】 已設定過通知!!");
 									 		return;
 									    });  	
 									    if(isNotExist){
 									    	//create webhook 
-											var webhookname = "小馬怪通知at"+message.channel.name+"_"+authorid;
+											var webhookname = "小馬怪通知 at "+message.channel.name+"_"+authorid;
 											// This will create the webhook with the name "Example Webhook" and an example avatar.
 											message.channel.createWebhook(webhookname, "https://i.imgur.com/P4yamS3.jpg")
 											// This will actually set the webhooks avatar, as mentioned at the start of the guide.
@@ -472,6 +490,7 @@ client.on('message', message => {
 								//console.log(sql);
 							  	exec_sql(sql).then(function(rtn2){
 							  		message.channel.send(message.author+",您的所有頻道通知已全部停用。如要啟用請使用^notify on.");
+							  		channelnotify(authorid,"您的所有頻道通知已全部停用。如要啟用請使用^notify on.");
 							  	});		
 
 								break;
@@ -483,6 +502,7 @@ client.on('message', message => {
 								//console.log(sql);
 							  	exec_sql(sql).then(function(rtn2){
 							  		message.channel.send(message.author+",您的所有頻道通知已全部啟用.");
+							  		channelnotify(authorid,"您的所有頻道通知已全部啟用.");
 							  	});		
 
 								break;								
