@@ -952,9 +952,14 @@ client.on('message', message => {
 					    	
 						var recordset = rows;
 						var msgcontent = "";
+						var rows = 0;
+						const msg = new Discord.RichEmbed();
+						msg.setColor("#0099ff");
+						msg.setTitle("全部BOSS清單");
+
 						for(i=0;i<recordset.length;i++)
 						{
-
+							rows ++;
 							var row = recordset[i];
 							var rank = "";
 							switch(row.rank){
@@ -968,12 +973,12 @@ client.on('message', message => {
 									rank = "紫";
 									break;
 							}							
-							msgcontent += "【野王編號： " +row.bossname + " "+ row.bossid + "("+rank+")" + " - 前次擊殺時間： "+(row.killed == null ? "無":row.killed) + " - 重生間格："+ row.cycletime +"小時 - 預計出現時間： "+(row.reborn == null ? "無":row.reborn) +" 】\n";
-							
+							msgcontent = "【野王編號： " +row.bossname + " "+ row.bossid + "("+rank+")  在 "+row.location+" - 前次擊殺時間： "+(row.killed == null ? "無":row.killed) + " - 重生間格："+ row.cycletime +"小時 - 預計出現時間： "+(row.reborn == null ? "無":row.reborn) +" 】\n";
+							msg.addField(msgcontent);
 							//message.channel.send(msgcontent);						
 						}
-						if(msgcontent!=""){
-							message.channel.send(msgcontent);	
+						if(rows>0){
+							message.channel.send(msg);	
 						}else{
 							message.channel.send("目前沒有記錄喔!!");	
 						}
