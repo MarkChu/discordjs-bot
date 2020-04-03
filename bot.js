@@ -759,6 +759,13 @@ client.on('message', message => {
 
 						pool.query(update_sql, function (error, results, fields) {
 						  if (error) handleError(error);
+						  //message.channel.send(message.author+",野王重生時間已全部重置!!");
+						})
+
+						var update_sql = mysql.format('UPDATE tblboss SET killtime = ? ,reborntime = ? ', [q_kill, q_reborn ]);
+
+						pool.query(update_sql, function (error, results, fields) {
+						  if (error) handleError(error);
 						  message.channel.send(message.author+",野王重生時間已全部重置!!");
 						})
 
@@ -805,8 +812,16 @@ client.on('message', message => {
 
 								pool.query(update_sql, function (error, results, fields) {
 								  if (error) handleError(error);
+								  //message.channel.send(message.author+",野王編號 【"+bossid+"】 已清空!!");
+								})
+
+								var update_sql = mysql.format('UPDATE tblboss SET killtime = ? ,reborntime = ? WHERE bossid = ? ', [q_kill, q_reborn , q_bossid ]);
+
+								pool.query(update_sql, function (error, results, fields) {
+								  if (error) handleError(error);
 								  message.channel.send(message.author+",野王編號 【"+bossid+"】 已清空!!");
 								})
+
 						    });  	
 						    if(isNotExist){
 						    	message.channel.send(message.author+",野王編號 【"+bossid+"】 此編號不存在。請重新輸入!!");
@@ -942,18 +957,15 @@ client.on('message', message => {
 							sqlstr += ",cycletime ";
 							sqlstr += ",bossimg  ";
 							sqlstr += ",rank  ";
-							sqlstr += ",bossname  ";
-							sqlstr += ",location ";
+							sqlstr += ",bossname,bossname_kr  ";
+							sqlstr += ",location,location_kr ";
 							sqlstr += ",lv ";	
 							sqlstr += "from tblboss a ";
 							sqlstr += "where bossid like '"+mapi+"-%' ";
 							sqlstr += "order by 1 ";	
 						const msg = new Discord.RichEmbed();
-						msg.setColor("#0099ff");
 						msg.setTitle("第"+mapi+"區BOSS清單");
-
-
-
+						msg.setColor("#0099ff");
 
 
 						pool.query(sqlstr, function(err, rows, fields) {
@@ -978,15 +990,15 @@ client.on('message', message => {
 										rank = "紫";
 										break;
 								}
-								var msgtitle = row.bossid+" "+row.bossname+" ("+rank+") ";							
-								var msgcontent = "地點 "+row.location+"\n";
-									msgcontent += "前次擊殺時間： "+(row.killed == null ? "無":row.killed) + " \n";
+								var msgtitle = row.bossid+" "+row.bossname_kr+" "+row.bossname + " ("+rank+") ";							
+								var msgcontent = "地點："+row.location_kr+" "+row.location+"\n";
+									msgcontent += "前次擊殺時間："+(row.killed == null ? "無":row.killed) + " \n";
 									if(row.cycletime==null){
 										msgcontent += "重生間格：隨機\n";
 									}else{
 										msgcontent += "重生間格："+ row.cycletime +"小時\n";
 										msgcontent += "預計出現時間： "+(row.reborn == null ? "無":row.reborn) +" \n";										
-									}
+								}
 								msg.addField(msgtitle,msgcontent);
 								//message.channel.send(msgcontent);						
 							}
