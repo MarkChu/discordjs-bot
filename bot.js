@@ -313,7 +313,7 @@ client.on('message', message => {
 					var sid = message.guild.id;
 					var cid = message.channel.id;
 
-					try(){
+					try{
 						sid = message.guild.id;
 						cid = message.channel.id;
 					}catch(e){
