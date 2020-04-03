@@ -781,6 +781,13 @@ client.on('message', message => {
 								})
 
 
+					        	if(killtime==""){
+					        		q_kill = mysql.raw("DATE_ADD(NOW(),INTERVAL 477 MINUTE)");
+									q_reborn = mysql.raw("DATE_ADD(DATE_ADD(NOW(),INTERVAL 477 MINUTE),INTERVAL (cycletime)*60 MINUTE)");
+					        	}else{
+					        		q_kill = mysql.raw("'"+killtime+"'");
+									q_reborn = mysql.raw("DATE_ADD('"+killtime+"',INTERVAL (cycletime)*60 MINUTE)");
+					        	}
 								var update_sql1 = mysql.format('UPDATE tblboss SET killtime = ? ,reborntime = ? WHERE bossid = ? ', [q_kill, q_reborn , q_bossid ]);								
 
 								pool.query(update_sql1, function (error, results, fields) {
