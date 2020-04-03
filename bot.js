@@ -432,6 +432,7 @@ client.on('message', message => {
 										//console.log(sql);
 									  	exec_sql(sql).then(function(rtn2){
 									  		message.channel.send(message.author+",目前頻道:【"+message.channel.name+"】 頻道通知已刪除!!");
+
 									  		return;
 									  	});
 								 		
@@ -506,7 +507,7 @@ client.on('message', message => {
 								var update_sql = "UPDATE tblChannelWebhook SET ison='N' WHERE userid = ? ; ";
 								var sql = mysql.format(update_sql , [q_userid] );
 								//console.log(sql);
-							  	exec_sql(sql).then(function(rtn2){
+							  	exec_sql(sql).then(function(rtn2){					  		
 							  		message.channel.send(message.author+",您的所有頻道通知已全部停用。如要啟用請使用^notify on.");
 							  		//channelnotify(authorid,"您的所有頻道通知已全部停用。如要啟用請使用^notify on.");
 							  	});		
@@ -519,8 +520,16 @@ client.on('message', message => {
 								var sql = mysql.format(update_sql , [q_userid] );
 								//console.log(sql);
 							  	exec_sql(sql).then(function(rtn2){
-							  		message.channel.send(message.author+",您的所有頻道通知已全部啟用.");
-							  		channelnotify(authorid,"您的所有頻道通知已全部啟用.");
+
+						        	const msg = new Discord.RichEmbed();
+
+						        	msg.setColor("#ff0000")
+						            .setTitle(message.author+",您的所有頻道通知已全部啟用.");
+
+							  		//message.channel.send(msg);
+
+							  		//send all set channel
+							  		channelnotify(authorid,msg);
 							  	});		
 
 								break;								
