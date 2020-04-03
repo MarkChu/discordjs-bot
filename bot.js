@@ -173,8 +173,8 @@ function checkboss_channel(){
 		sqlstr += ",cycletime ";
 		sqlstr += ",bossimg  ";
 		sqlstr += ",rank  ";
-		sqlstr += ",bossname  ";
-		sqlstr += ",location ";
+		sqlstr += ",bossname,bossname_kr  ";
+		sqlstr += ",location,location_kr ";
 		sqlstr += ",lv ";		
 		sqlstr += "from tblboss a ";
 		sqlstr += "where reborntime IS NOT null ";
@@ -191,15 +191,23 @@ function checkboss_channel(){
 
 			var row = recordset[i];
 			var rank = "";
+			var background = "";
 			switch(row.rank){
 				case 'r':
 					rank = "紅";
+					background = "#ff0000";
 					break;
 				case 'b':
 					rank = "藍";
+					background = "#0000ff";
 					break;
 				case 'p':
 					rank = "紫";
+					background = "#8340ff";
+					break;
+				default:
+					rank = "";
+					background = "#ffffff";					
 					break;
 			}
 
@@ -213,11 +221,12 @@ function checkboss_channel(){
 
         	const msg = new Discord.RichEmbed();
 
-        	msg.setColor("#ff0000")
+        	msg.setColor(background)
             .setTitle(msgcontent)
-            .addField("野王編號", row.bossid + "("+rank+")" )
-            .addField("野王名稱", row.bossname )
-            .addField("出現地區", row.location )
+            .addField("野王編號", row.bossid + " ("+rank+") " )
+            .addField("野王名稱", row.bossname_kr+" "+row.bossname )
+            .addField("等級", row.lv)
+            .addField("出現地區", row.location_kr+" "+row.location )
             .addField("預計出現時間", row.reborn )
             .addField("重生時間", row.cycletime + " 小時");
 
