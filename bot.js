@@ -309,10 +309,18 @@ client.on('message', message => {
 			switch(command){
 
 				case 'notify':
+					var isok = true;
 					var sid = message.guild.id;
 					var cid = message.channel.id;
 
-					if (!args.length) {
+					try(){
+						sid = message.guild.id;
+						cid = message.channel.id;
+					}catch(e){
+						isok = false;
+					}
+
+					if (!args.length && isok) {
 						//無參數
 						//console.log("show notify..");
 						var sqlstr = "select server,channel,wbname,ison ";			    
