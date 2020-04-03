@@ -1025,6 +1025,9 @@ client.on('message', message => {
 
 				case 'boss':
 
+					const msg = new Discord.RichEmbed();
+					msg.setTitle("待出BOSS清單");
+					msg.setColor("#ff0000");
 
 					var sqlstr = "select bossid,imgurl ";			    
 						sqlstr += ",left(convert(killtime,DATETIME),16) as killed ";
@@ -1044,10 +1047,11 @@ client.on('message', message => {
 					    if (err) handleError(err);
 					    	
 						var recordset = rows;
-						var msgcontent = "";
+						var rowscnt = 0;
+
 						for(i=0;i<recordset.length;i++)
 						{
-
+							rowscnt ++;
 							var row = recordset[i];
 							var rank = "";
 							switch(row.rank){
@@ -1061,12 +1065,20 @@ client.on('message', message => {
 									rank = "紫";
 									break;
 							}
-							msgcontent += "【" + row.bossid +" "+ row.bossname + " ("+rank+") 在 "+row.location+" ，" + " - 預計時間:"+row.reborn+" - 距離現在："+ row.dues +"分鐘】\n";
+							var msgtitle = row.bossid+" "+row.bossname_kr+" "+row.bossname + " ("+rank+") ";							
+							var msgcontent = "地點："+row.location_kr+" "+row.location+"\n";
+								msgcontent += "預計時間："+(row.reborn == null ? "無":row.reborn) + " \n";
+								msgcontent += "距離現在："+row.dues + "分鐘 \n";									
+							
+							msg.addField(msgtitle,msgcontent);
+
+
+							//msgcontent += "【" + row.bossid +" "+ row.bossname + " ("+rank+") 在 "+row.location+" ，" + " - 預計時間:"+row.reborn+" - 距離現在："+ row.dues +"分鐘】\n";
 							
 							//message.channel.send(msgcontent);						
 						}
-						if(msgcontent!=""){
-							message.channel.send(msgcontent);	
+						if(rowscnt>0){
+							message.channel.send(msg);	
 						}else{
 							message.channel.send("目前的野王都沒有擊殺記錄喔!!");	
 						}
