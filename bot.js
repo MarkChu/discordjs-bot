@@ -6,7 +6,7 @@ const prefix = "^";
 
 const schedule = require('node-schedule');
 const webhook = require("webhook-discord");
-//const Hook = new webhook.Webhook("https://discordapp.com/api/webhooks/653966367535398912/ABIrRHZq4yq43P4Tcsj3fMBhTZ_cbSfSXYBF2TXaRWF29l5frbb5ICMHq6lDlAO92G9A");
+const Hook = new webhook.Webhook("https://discordapp.com/api/webhooks/653966367535398912/ABIrRHZq4yq43P4Tcsj3fMBhTZ_cbSfSXYBF2TXaRWF29l5frbb5ICMHq6lDlAO92G9A");
 /*
 
 https://discordapp.com/oauth2/authorize?&client_id=653601639260749835&scope=bot&permissions=0
