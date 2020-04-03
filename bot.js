@@ -638,8 +638,9 @@ client.on('message', message => {
 							}
 						}
 					
-						var sqlstr = "select uniqid ";			    
-							sqlstr += "from tblboss ";
+						var sqlstr = "select uniqid ";
+							sqlstr += "(select count(*) from tblUserBoss z where z.bossid=a.bossid) cnt ";		    
+							sqlstr += "from tblboss a ";
 							sqlstr += "where bossid='"+bossid+"'";
 						
 						pool.query(sqlstr, function(err, result, fields) {
@@ -648,6 +649,7 @@ client.on('message', message => {
 							Object.keys(result).forEach(function(key) {
 						      	var row = result[key];
 						      	uniqid = row.uniqid;
+						      	cnt = row.cnt;
 						      	isNotExist = false;
 
 						        var	update_sql = "";
@@ -666,7 +668,13 @@ client.on('message', message => {
 									q_reborn = mysql.raw("DATE_ADD('"+killtime+"',INTERVAL (select cycletime FROM tblboss WHERE bossid='"+bossid+"')*60 MINUTE)");
 					        	}
 
-								var update_sql = mysql.format('UPDATE tblUserBoss SET killtime = ? ,reborntime = ? WHERE userid= ? and bossid = ? ', [q_kill, q_reborn , q_userid , q_bossid ]);
+
+					        	if(cnt>0){
+					        		update_sql = mysql.format('UPDATE tblUserBoss SET killtime = ? ,reborntime = ? WHERE userid= ? and bossid = ? ', [q_kill, q_reborn , q_userid , q_bossid ]);
+					        	}else{
+					        		update_sql = mysql.format('INSERT tblUserBoss (bossid,userid,killtime,reborntime) VALUES (?, ?, ?, ?) ', [q_bossid, q_userid, q_kill, q_reborn   ]);
+					        	}
+								
 
 								pool.query(update_sql, function (error, results, fields) {
 								  if (error) handleError(error);
