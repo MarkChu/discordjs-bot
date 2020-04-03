@@ -140,11 +140,21 @@ function channelallnotify(fnmsg){
 		Object.keys(rtn).forEach(function(key) {
 			var row = rtn[key];
 
+
+
+			hooksend(row.wbid , row.wbtoken , fnmsg)
+			.then(rtn => {
+				console.log(rtn);
+			})
+			.catch(console.error);
+
+
+			/*
 			var webhookClient = new Discord.WebhookClient(row.wbid , row.wbtoken );
 			//console.log(webhookClient);
 			try {
 				
-				webhookClient.send('', {
+				await webhookClient.send('', {
 					username: '小馬怪',
 					//avatarURL: 'https://i.imgur.com/wSTFkRM.png',
 					embeds: [fnmsg],
@@ -153,7 +163,8 @@ function channelallnotify(fnmsg){
 			} catch (error) {
 				console.error('Error trying to send: ', error);
 			}
-
+			*/
+	
 		    //var row = rtn[key];
 			//var theHook = new webhook.Webhook("https://discordapp.com/api/webhooks/"+row.channel+"/"+row.wbtoken);
 			//console.log(theHook);
@@ -163,6 +174,27 @@ function channelallnotify(fnmsg){
 
 
 }
+
+
+
+async function hooksend(wbid,wbtoken,msg){
+	var webhookClient = new Discord.WebhookClient(wbid , wbtoken );
+	//console.log(webhookClient);
+	try {
+		
+		await webhookClient.send('', {
+			username: '小馬怪',
+			//avatarURL: 'https://i.imgur.com/wSTFkRM.png',
+			embeds: [msg],
+		});
+		console.log("hooksend success");
+		return true;
+	} catch (error) {
+		console.error('Error trying to send: ', error);
+		return false;
+	}
+}
+
 
 
 function checkboss_channel(){
