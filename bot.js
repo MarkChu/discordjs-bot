@@ -42,7 +42,7 @@ client.once('ready', () => {
 	  checkboss_channel();
 	});
 
-	testnotify();
+	//testnotify();
 	/*
 	var j1 = schedule.scheduleJob('0 0 * * * *', function(){
 	  //每到0分時執行一次(每小時)
