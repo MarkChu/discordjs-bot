@@ -524,9 +524,9 @@ client.on('message', message => {
 						        	const msg = new Discord.RichEmbed();
 
 						        	msg.setColor("#ff0000")
-						            .setTitle(message.author+",您的所有頻道通知已全部啟用.");
+						            .setTitle(message.author.username+",您的所有頻道通知已全部啟用.");
 
-						            console.log(message);
+						            //console.log(message);
 							  		//message.channel.send(msg);
 
 							  		//send all set channel
