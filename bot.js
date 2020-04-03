@@ -933,7 +933,7 @@ client.on('message', message => {
 
 				case 'bossall':
 
-					for(mapi=1;mapi<=4;mapi++;){
+					for(mapi=1;mapi<=4;mapi++){
 
 						var sqlstr = "select bossid,imgurl ";			    
 							sqlstr += ",left(convert(killtime,DATETIME),16) as killed ";
