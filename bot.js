@@ -310,8 +310,6 @@ client.on('message', message => {
 
 				case 'notify':
 					var isok = true;
-					var sid = message.guild.id;
-					var cid = message.channel.id;
 
 					try{
 						sid = message.guild.id;
