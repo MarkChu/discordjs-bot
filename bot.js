@@ -1025,9 +1025,9 @@ client.on('message', message => {
 
 				case 'boss':
 
-					const msg = new Discord.RichEmbed();
-					msg.setTitle("待出BOSS清單");
-					msg.setColor("#ff0000");
+					const bossmsg = new Discord.RichEmbed();
+					bossmsg.setTitle("待出BOSS清單");
+					bossmsg.setColor("#ff0000");
 
 					var sqlstr = "select bossid,imgurl ";			    
 						sqlstr += ",left(convert(killtime,DATETIME),16) as killed ";
@@ -1070,7 +1070,7 @@ client.on('message', message => {
 								msgcontent += "預計時間："+(row.reborn == null ? "無":row.reborn) + " \n";
 								msgcontent += "距離現在："+row.dues + "分鐘 \n";									
 							
-							msg.addField(msgtitle,msgcontent);
+							bossmsg.addField(msgtitle,msgcontent);
 
 
 							//msgcontent += "【" + row.bossid +" "+ row.bossname + " ("+rank+") 在 "+row.location+" ，" + " - 預計時間:"+row.reborn+" - 距離現在："+ row.dues +"分鐘】\n";
@@ -1078,7 +1078,7 @@ client.on('message', message => {
 							//message.channel.send(msgcontent);						
 						}
 						if(rowscnt>0){
-							message.channel.send(msg);	
+							message.channel.send(bossmsg);	
 						}else{
 							message.channel.send("目前的野王都沒有擊殺記錄喔!!");	
 						}
