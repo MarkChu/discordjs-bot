@@ -960,9 +960,7 @@ client.on('message', message => {
 						    if (err) handleError(err);
 						    	
 							var recordset = rows;
-							var msgcontent = "";
 							var rows = 0;
-
 
 							for(i=0;i<recordset.length;i++)
 							{
@@ -979,9 +977,10 @@ client.on('message', message => {
 									case 'p':
 										rank = "紫";
 										break;
-								}							
-								msgcontent = "【野王： " +row.bossname + " ("+rank+")  在 "+row.location+" - 前次擊殺時間： "+(row.killed == null ? "無":row.killed) + " - 重生間格："+ row.cycletime +"小時 - 預計出現時間： "+(row.reborn == null ? "無":row.reborn) +" 】\n";
-								msg.addField(row.bossid,msgcontent);
+								}
+								var msgtitle = row.bossid+" "+row.bossname+" ("+rank+") ";							
+								var msgcontent = "地點 "+row.location+" \n前次擊殺時間： "+(row.killed == null ? "無":row.killed) + " \n重生間格："+ row.cycletime +"小時\n預計出現時間： "+(row.reborn == null ? "無":row.reborn) +" \n";
+								msg.addField(msgtitle,msgcontent);
 								//message.channel.send(msgcontent);						
 							}
 
@@ -990,7 +989,7 @@ client.on('message', message => {
 							if(rows>0){
 								setTimeout(function(){
 									message.channel.send(msg);	
-								},mapi*200);
+								},mapi*100);
 							}else{
 								//message.channel.send("目前沒有記錄喔!!");	
 							}
