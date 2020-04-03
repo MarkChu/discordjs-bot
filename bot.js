@@ -933,58 +933,64 @@ client.on('message', message => {
 
 				case 'bossall':
 
+					for(mapi=1;mapi<=4;mapi++;){
 
-					var sqlstr = "select bossid,imgurl ";			    
-						sqlstr += ",left(convert(killtime,DATETIME),16) as killed ";
-						sqlstr += ",left(convert(reborntime,DATETIME),16) as reborn ";
-						sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
-						sqlstr += ",cycletime ";
-						sqlstr += ",bossimg  ";
-						sqlstr += ",rank  ";
-						sqlstr += ",bossname  ";
-						sqlstr += ",location ";
-						sqlstr += ",lv ";	
-						sqlstr += "from tblboss a ";
-						sqlstr += "order by 1 ";	
+						var sqlstr = "select bossid,imgurl ";			    
+							sqlstr += ",left(convert(killtime,DATETIME),16) as killed ";
+							sqlstr += ",left(convert(reborntime,DATETIME),16) as reborn ";
+							sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
+							sqlstr += ",cycletime ";
+							sqlstr += ",bossimg  ";
+							sqlstr += ",rank  ";
+							sqlstr += ",bossname  ";
+							sqlstr += ",location ";
+							sqlstr += ",lv ";	
+							sqlstr += "from tblboss a ";
+							sqlstr += "where bossid like '"+mapi+"-%' ";
+							sqlstr += "order by 1 ";	
 
-					pool.query(sqlstr, function(err, rows, fields) {
-					    if (err) handleError(err);
-					    	
-						var recordset = rows;
-						var msgcontent = "";
-						var rows = 0;
-						const msg = new Discord.RichEmbed();
-						msg.setColor("#0099ff");
-						msg.setTitle("全部BOSS清單");
+						pool.query(sqlstr, function(err, rows, fields) {
+						    if (err) handleError(err);
+						    	
+							var recordset = rows;
+							var msgcontent = "";
+							var rows = 0;
+							const msg = new Discord.RichEmbed();
+							msg.setColor("#0099ff");
+							msg.setTitle("第"+mapi+"區BOSS清單");
 
-						for(i=0;i<recordset.length;i++)
-						{
-							rows ++;
-							var row = recordset[i];
-							var rank = "";
-							switch(row.rank){
-								case 'r':
-									rank = "紅";
-									break;
-								case 'b':
-									rank = "藍";
-									break;
-								case 'p':
-									rank = "紫";
-									break;
-							}							
-							msgcontent = "【野王編號： " +row.bossname + " "+ row.bossid + "("+rank+")  在 "+row.location+" - 前次擊殺時間： "+(row.killed == null ? "無":row.killed) + " - 重生間格："+ row.cycletime +"小時 - 預計出現時間： "+(row.reborn == null ? "無":row.reborn) +" 】\n";
-							msg.addField(msgcontent);
-							//message.channel.send(msgcontent);						
-						}
-						if(rows>0){
-							message.channel.send(msg);	
-						}else{
-							message.channel.send("目前沒有記錄喔!!");	
-						}
-						//console.log(msgcontent);
+							for(i=0;i<recordset.length;i++)
+							{
+								rows ++;
+								var row = recordset[i];
+								var rank = "";
+								switch(row.rank){
+									case 'r':
+										rank = "紅";
+										break;
+									case 'b':
+										rank = "藍";
+										break;
+									case 'p':
+										rank = "紫";
+										break;
+								}							
+								msgcontent = "【野王編號： " +row.bossname + " "+ row.bossid + "("+rank+")  在 "+row.location+" - 前次擊殺時間： "+(row.killed == null ? "無":row.killed) + " - 重生間格："+ row.cycletime +"小時 - 預計出現時間： "+(row.reborn == null ? "無":row.reborn) +" 】\n";
+								msg.addField(msgcontent);
+								//message.channel.send(msgcontent);						
+							}
+							if(rows>0){
+								message.channel.send(msg);	
+							}else{
+								message.channel.send("目前沒有記錄喔!!");	
+							}
+							//console.log(msgcontent);
 
-					});
+						});
+
+
+					}
+
 
 					//message.channel.send('test!');
 					break;
