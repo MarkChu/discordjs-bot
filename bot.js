@@ -221,12 +221,16 @@ function checkboss_channel(){
 
         	const msg = new Discord.RichEmbed();
 
+
+			var bossname = row.bossname_kr+(row.bossname!=row.bossname_kr?" "+row.bossname:"");
+			var bosslocation = row.location_kr+(row.location!=row.location_kr?" "+row.location:"");
+
         	msg.setColor(background)
             .setTitle(msgcontent)
             .addField("野王編號", row.bossid + " ("+rank+") " )
-            .addField("野王名稱", row.bossname_kr+" "+row.bossname )
+            .addField("野王名稱", bossname )
             .addField("等級", row.lv)
-            .addField("出現地區", row.location_kr+" "+row.location )
+            .addField("出現地區", bosslocation )
             .addField("預計出現時間", row.reborn )
             .addField("重生時間", row.cycletime + " 小時");
 
@@ -999,8 +1003,11 @@ client.on('message', message => {
 										rank = "紫";
 										break;
 								}
-								var msgtitle = row.bossid+" "+row.bossname_kr + (row.bossname!=row.bossname_kr?" "+row.bossname:"") + " ("+rank+") ";							
-								var msgcontent = "地點："+row.location_kr+(row.location!=row.location_kr?" "+row.location:"")+"\n";
+								var bossname = row.bossname_kr+(row.bossname!=row.bossname_kr?" "+row.bossname:"");
+								var bosslocation = row.location_kr+(row.location!=row.location_kr?" "+row.location:"");
+
+								var msgtitle = row.bossid+" "+ bossname + " ("+rank+") ";							
+								var msgcontent = "地點："+bosslocation+"\n";
 									msgcontent += "前次擊殺時間："+(row.killed == null ? "無":row.killed) + " \n";
 									if(row.cycletime==null){
 										msgcontent += "重生間格：隨機\n";
@@ -1017,7 +1024,7 @@ client.on('message', message => {
 							if(rows>0){
 								setTimeout(function(){
 									message.channel.send(msg);	
-								},mapi*100);
+								},mapi*200);
 							}else{
 								//message.channel.send("目前沒有記錄喔!!");	
 							}
@@ -1074,8 +1081,12 @@ client.on('message', message => {
 									rank = "紫";
 									break;
 							}
-							var msgtitle = row.bossid+" "+row.bossname_kr+" "+row.bossname + " ("+rank+") ";							
-							var msgcontent = "地點："+row.location_kr+" "+row.location+"\n";
+							var bossname = row.bossname_kr+(row.bossname!=row.bossname_kr?" "+row.bossname:"");
+							var bosslocation = row.location_kr+(row.location!=row.location_kr?" "+row.location:"");
+
+
+							var msgtitle = row.bossid+" "+ bossname + " ("+rank+") ";							
+							var msgcontent = "地點："+bosslocation+"\n";
 								msgcontent += "預計時間："+(row.reborn == null ? "無":row.reborn) + " \n";
 								msgcontent += "距離現在："+row.dues + "分鐘 \n";									
 							
