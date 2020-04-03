@@ -488,7 +488,7 @@ client.on('message', message => {
 
 					const msg2 = new Discord.RichEmbed();
 					msg2.setColor("#ff0000")
-		            .setTitle("狄恩領地 野王編號 2-01 至 2-10、克3、克6")
+		            .setTitle("狄恩領地 野王編號 2-01 至 2-12")
 		            .setImage("https://i.imgur.com/Pkg7Qrb.jpg")
 		            .setTimestamp();
 					message.channel.send(msg2);
@@ -499,6 +499,13 @@ client.on('message', message => {
 		            .setImage("https://i.imgur.com/EstZyjp.jpg")
 		            .setTimestamp();
 					message.channel.send(msg3);
+
+					const msg4 = new Discord.RichEmbed();
+					msg4.setColor("#ff0000")
+		            .setTitle("奧倫領地 野王編號 4-01 至 4-09。")
+		            //.setImage("https://i.imgur.com/EstZyjp.jpg")
+		            .setTimestamp();
+					message.channel.send(msg4);
 
 
 					break;
@@ -735,6 +742,7 @@ client.on('message', message => {
 						sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
 						sqlstr += ",(select cycletime FROM tblboss z WHERE z.bossid=a.bossid) cycletime ";
 						sqlstr += ",(select rank FROM tblboss z WHERE z.bossid=a.bossid) rank ";
+						sqlstr += ",bossname,location,lv ";
 						sqlstr += "from tblUserBoss a ";
 						sqlstr += "where userid = '"+authorid+"'";
 						sqlstr += "and reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
@@ -761,7 +769,7 @@ client.on('message', message => {
 									rank = "紫";
 									break;
 							}
-							msgcontent += "【" + row.bossid + "("+rank+")" + " - 預計時間:"+row.reborn+" - 距離現在："+ row.dues +"分鐘】\n";
+							msgcontent += "【" + row.bossid +" "+ row.bossname + " ("+rank+") 在 "+row.location+" ，" + " - 預計時間:"+row.reborn+" - 距離現在："+ row.dues +"分鐘】\n";
 							
 							//message.author.send(msgcontent);						
 						}
