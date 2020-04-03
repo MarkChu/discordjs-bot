@@ -105,7 +105,7 @@ function channelnotify(fnuserid,fnmsg){
 			//console.log(webhookClient);
 			try {
 				
-				webhookClient.send('Webhook test', {
+				webhookClient.send('', {
 					username: '小馬怪',
 					//avatarURL: 'https://i.imgur.com/wSTFkRM.png',
 					embeds: [fnmsg],
@@ -526,6 +526,7 @@ client.on('message', message => {
 						        	msg.setColor("#ff0000")
 						            .setTitle(message.author+",您的所有頻道通知已全部啟用.");
 
+						            console.log(message);
 							  		//message.channel.send(msg);
 
 							  		//send all set channel
