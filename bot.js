@@ -102,15 +102,15 @@ function channelnotify(fnuserid,fnmsg){
 			var row = rtn[key];
 
 			var webhookClient = new Discord.WebhookClient(row.wbid , row.wbtoken );
-			console.log(webhookClient);
+			//console.log(webhookClient);
 			try {
-				/*
+				
 				webhookClient.send('Webhook test', {
 					username: '小馬怪',
 					//avatarURL: 'https://i.imgur.com/wSTFkRM.png',
-					embeds: fnmsg,
+					embeds: [fnmsg],
 				});
-				*/
+				
 			} catch (error) {
 				console.error('Error trying to send: ', error);
 			}
