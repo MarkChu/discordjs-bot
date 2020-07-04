@@ -760,7 +760,7 @@ client.on('message', message => {
 
 					const msg2 = new Discord.RichEmbed();
 					msg2.setColor("#ff0000")
-		            .setTitle("狄恩領地 野王編號 2-01 至 2-12")
+		            .setTitle("狄恩領地 野王編號 2-01 至 2-13")
 		            .setImage("https://i.imgur.com/Pkg7Qrb.jpg")
 		            .setTimestamp();
 					message.channel.send(msg2);
@@ -774,10 +774,17 @@ client.on('message', message => {
 
 					const msg4 = new Discord.RichEmbed();
 					msg4.setColor("#ff0000")
-		            .setTitle("奧倫領地 野王編號 4-01 至 4-09。")
+		            .setTitle("奧倫領地 野王編號 4-01 至 4-11。")
 		            //.setImage("https://i.imgur.com/EstZyjp.jpg")
 		            .setTimestamp();
 					message.channel.send(msg4);
+
+					const msg5 = new Discord.RichEmbed();
+					msg5.setColor("#ff0000")
+		            .setTitle("Aden領地 野王編號 5-01 至 4-05。")
+		            //.setImage("https://i.imgur.com/EstZyjp.jpg")
+		            .setTimestamp();
+					message.channel.send(msg5);
 
 
 					break;
