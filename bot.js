@@ -207,7 +207,7 @@ async function hooksend(wbid,wbtoken,msg){
 
 function checkboss_channel(){
 
-	var sqlstr = "select a.bossid,a.imgurl ";			    
+	var sqlstr = "select a.bossid,a.imgurl2 as imgurl ";			    
 		sqlstr += ",left(convert(b.killtime,DATETIME),16) as killed ";
 		sqlstr += ",left(convert(b.reborntime,DATETIME),16) as reborn ";
 		sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , b.reborntime ) AS dues ";
@@ -217,7 +217,8 @@ function checkboss_channel(){
 		sqlstr += ",a.bossname,a.bossname_kr  ";
 		sqlstr += ",a.location,a.location_kr ";
 		sqlstr += ",a.lv ";	
-		sqlstr += ",b.serverid ";	
+		sqlstr += ",b.serverid ";
+		sqlstr += ",a.url ";	
 		sqlstr += "from tblboss a INNER JOIN tblServerBoss b ";
 		sqlstr += "on a.bossid = b.bossid ";
 		sqlstr += "where b.reborntime IS NOT null ";
@@ -267,9 +268,14 @@ function checkboss_channel(){
 
 			var bossname = row.bossname_kr+(row.bossname!=row.bossname_kr?" "+row.bossname:"");
 			var bosslocation = row.location_kr+(row.location!=row.location_kr?" "+row.location:"");
+			var url = "http://lineage2m.inven.co.kr/dataninfo/boss/";
+			if(row.url!=null && row.url!=""){
+				url = row.url;
+			}
 
         	msg.setColor(background)
             .setTitle(msgcontent)
+            .setURL(url)
             .addField("伺服器", row.serverid )
             .addField("野王編號", row.bossid + " ("+rank+") " )
             .addField("野王名稱", bossname )
@@ -1083,7 +1089,7 @@ client.on('message', message => {
 
 					for(mapi=1;mapi<=5;mapi++){
 
-						var sqlstr = "select a.bossid,a.imgurl ";			    
+						var sqlstr = "select a.bossid,a.imgurl2 as imgurl ";			    
 							sqlstr += ",left(convert(b.killtime,DATETIME),16) as killed ";
 							sqlstr += ",left(convert(b.reborntime,DATETIME),16) as reborn ";
 							sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , b.reborntime ) AS dues ";
@@ -1166,7 +1172,7 @@ client.on('message', message => {
 					bossmsg.setTitle("伺服器:"+serverid+" 待出BOSS清單");
 					bossmsg.setColor("#ff0000");
 
-					var sqlstr = "select a.bossid,a.imgurl ";			    
+					var sqlstr = "select a.bossid,a.imgurl2 as imgurl ";			    
 						sqlstr += ",left(convert(b.killtime,DATETIME),16) as killed ";
 						sqlstr += ",left(convert(b.reborntime,DATETIME),16) as reborn ";
 						sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , b.reborntime ) AS dues ";
