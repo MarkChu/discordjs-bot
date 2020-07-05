@@ -92,7 +92,7 @@ client.login(token);
 
 function channelnotify(fnuserid,fnmsg){
 
-	var sqlstr = "select uniqid,server,channel,wbname,wbid,wbtoken ";			    
+	var sqlstr = "select uniqid,server,channel,wbname,wbid,wbtoken ";
 		sqlstr += "from tblChannelWebhook ";
 		sqlstr += "where userid='"+fnuserid+"'";
 		sqlstr += "and ison='Y' ";
@@ -206,19 +206,22 @@ async function hooksend(wbid,wbtoken,msg){
 
 
 function checkboss_channel(){
-	var sqlstr = "select bossid,imgurl ";			    
-		sqlstr += ",left(convert(killtime,DATETIME),16) as killed ";
-		sqlstr += ",left(convert(reborntime,DATETIME),16) as reborn ";
-		sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
-		sqlstr += ",cycletime ";
-		sqlstr += ",bossimg  ";
-		sqlstr += ",rank  ";
-		sqlstr += ",bossname,bossname_kr  ";
-		sqlstr += ",location,location_kr ";
-		sqlstr += ",lv ";		
-		sqlstr += "from tblboss a ";
-		sqlstr += "where reborntime IS NOT null ";
-		sqlstr += "and TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime )  in (0 ,5 ,10) ";
+
+	var sqlstr = "select a.bossid,a.imgurl ";			    
+		sqlstr += ",left(convert(b.killtime,DATETIME),16) as killed ";
+		sqlstr += ",left(convert(b.reborntime,DATETIME),16) as reborn ";
+		sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , b.reborntime ) AS dues ";
+		sqlstr += ",a.cycletime ";
+		sqlstr += ",a.bossimg  ";
+		sqlstr += ",a.rank  ";
+		sqlstr += ",a.bossname,a.bossname_kr  ";
+		sqlstr += ",a.location,a.location_kr ";
+		sqlstr += ",a.lv ";	
+		sqlstr += ",b.serverid ";	
+		sqlstr += "from tblboss a LEFT OUTER JOIN (SELECT * from tblServerBoss WHERE serverid='"+serverid+"') b ";
+		sqlstr += "on a.bossid = b.bossid ";
+		sqlstr += "where b.reborntime IS NOT null ";
+		sqlstr += "and TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , b.reborntime )  in (0 ,5 ,10) ";
 		sqlstr += "order by 5 ";	
 
 	pool.query(sqlstr, function(err, rows, fields) {
@@ -251,7 +254,7 @@ function checkboss_channel(){
 					break;
 			}
 
-        	var msgcontent = "野王出沒通知：【" + row.bossid +" "+ row.bossname + " ("+rank+") 在 "+row.location+ "】";
+        	var msgcontent = row.serverid + " 野王出沒通知：【" + row.bossid +" "+ row.bossname + " ("+rank+") 在 "+row.location+ "】";
         	//console.log(row);
         	if(parseInt(row.dues)==0){
         		msgcontent += " 目前已經重生，趕快去吃王吧!!";
@@ -267,6 +270,7 @@ function checkboss_channel(){
 
         	msg.setColor(background)
             .setTitle(msgcontent)
+            .addField("伺服器", row.serverid )
             .addField("野王編號", row.bossid + " ("+rank+") " )
             .addField("野王名稱", bossname )
             .addField("等級", row.lv)
@@ -447,6 +451,7 @@ client.on('message', message => {
 		.addField("機器人網址：",'https://discordapp.com/oauth2/authorize?&client_id=653601639260749835&scope=bot&permissions=537918656')
 		.setTitle("指令說明："+prefix+"help")
 		.addField(prefix+"register", '第一次註冊開始使用。')
+		.addField(prefix+"server 伺服器ID", '設定所在天2M伺服器，例如4-4, 13-2, 6-6。')
 		.addField(prefix+"map", '列出野王地圖及編號。')
 		.addField(prefix+"boss", '列出目前有紀錄的BOSS重生時間。')
 		.addField(prefix+"bossall", '列出目前建檔的BOSS。')
@@ -503,6 +508,7 @@ client.on('message', message => {
 				  	});
 				  });
 
+
 				})
 
 		    }
@@ -512,13 +518,60 @@ client.on('message', message => {
 	}else{
 		//以下操作都需要註冊
 		checklogin(authorid).then(function(login){
-			if(login){
+			if(login != null){
 
-
+			var serverid = login[0].serverid;	
+			if(serverid == null || serverid == "" || serverid == undefined){
+				var msg = "伺服器ID未設定, "+message.author+"!\n";
+				msg += "請先設定伺服器ID，設定方式如下：\n";
+				msg += prefix+"server 伺服器ID：伺服器ID例如 4-4 , 13-2 , 6-6。";
+				message.channel.send(msg);
+				return;
+			}
 
 
 			switch(command){
+				case 'server':
+					if (!args.length) {
+						var msg = "參數輸入錯誤, "+message.author+"!\n";
+						msg += "輸入方式如下：\n";
+						msg += prefix+"server 伺服器ID：伺服器ID例如 4-4 , 13-2 , 6-6。";
+						message.channel.send(msg);
+						return;
+					}else{
+						var input = args[0];			
+						var q_userid = mysql.raw("'"+authorid+"'");
+						var q_serverid = mysql.raw("'"+input+"'");
 
+						var update_sql = "UPDATE tblUser SET serverid= ? WHERE userid = ? ; ";
+						var sql = mysql.format(update_sql , [q_serverid , q_userid] );
+
+
+						var sqlstr = " INSERT INTO tblServerBoss (bossid,serverid) ";
+						sqlstr = sqlstr + " SELECT bossid,serverid ";
+						sqlstr = sqlstr + " FROM ";
+						sqlstr = sqlstr + " ( ";
+						sqlstr = sqlstr + " 	SELECT b.*,a.serverid ";
+						sqlstr = sqlstr + " 	,(SELECT COUNT(*) FROM tblServerBoss z WHERE z.bossid = b.bossid AND z.serverid = a.serverid) cnt ";
+						sqlstr = sqlstr + " 	FROM ";
+						sqlstr = sqlstr + " 	( ";
+						sqlstr = sqlstr + " 	SELECT serverid ";
+						sqlstr = sqlstr + " 	FROM tblUser ";
+						sqlstr = sqlstr + " 	WHERE serverid > '' ";
+						sqlstr = sqlstr + " 	GROUP BY serverid ";
+						sqlstr = sqlstr + " 	) a CROSS JOIN tblboss b ";
+						sqlstr = sqlstr + " ) a ";
+						sqlstr = sqlstr + " WHERE cnt = 0 ";
+						sqlstr = sqlstr + " AND serverid = ? ";
+						var sql2 = mysql.format(sqlstr , [q_serverid ] );
+
+						exec_sql(sql).then(function(rtn){
+							exec_sql(sql2).then(function(rtn2){
+					  			message.channel.send(message.author+",您的伺服器已經設定為:【"+input+"】 !!");
+					  			return;
+					  		});	
+					  	});	
+					}
 				case 'notify':
 					var isok = true;
 
@@ -815,6 +868,8 @@ client.on('message', message => {
 						var q_kill = mysql.raw("DATE_ADD('"+fixtime+"',INTERVAL 10 MINUTE )");
 						var q_reborn = mysql.raw("DATE_ADD('"+fixtime+"',INTERVAL (select cycletime FROM tblboss z WHERE z.bossid=tblUserBoss.bossid)*60+10 MINUTE )");
 
+
+						// user boss
 						var update_sql = mysql.format('UPDATE tblUserBoss SET killtime = ? ,reborntime = ? WHERE userid= ? ', [q_kill, q_reborn , q_userid ]);
 
 						pool.query(update_sql, function (error, results, fields) {
@@ -822,7 +877,9 @@ client.on('message', message => {
 						  //message.channel.send(message.author+",野王重生時間已全部重置!!");
 						})
 
-						var update_sql = mysql.format('UPDATE tblboss SET killtime = ? ,reborntime = ? ', [q_kill, q_reborn ]);
+						// server boss
+						var q_serverid = mysql.raw("'"+serverid+"'");
+						var update_sql = mysql.format('UPDATE tblServerBoss SET killtime = ? ,reborntime = ? ,userid = ? WHERE serverid = ?  ', [q_kill, q_reborn, q_userid, q_serverid ]);
 
 						pool.query(update_sql, function (error, results, fields) {
 						  if (error) handleError(error);
@@ -875,7 +932,8 @@ client.on('message', message => {
 								  //message.channel.send(message.author+",野王編號 【"+bossid+"】 已清空!!");
 								})
 
-								var update_sql = mysql.format('UPDATE tblboss SET killtime = ? ,reborntime = ? WHERE bossid = ? ', [q_kill, q_reborn , q_bossid ]);
+								var q_serverid = mysql.raw("'"+serverid+"'");
+								var update_sql = mysql.format('UPDATE tblServerBoss SET killtime = ? ,reborntime = ?, userid = ? WHERE bossid = ? and serverid = ? ', [q_kill, q_reborn ,q_userid , q_bossid , q_serverid ]);
 
 								pool.query(update_sql, function (error, results, fields) {
 								  if (error) handleError(error);
@@ -929,7 +987,8 @@ client.on('message', message => {
 						}
 					
 						var sqlstr = "select uniqid ";
-							sqlstr += ",(select count(*) from tblUserBoss z where z.bossid=a.bossid) cnt ";		    
+							sqlstr += ",(select count(*) from tblUserBoss z where z.bossid=a.bossid) cnt ";	
+							sqlstr += ",(select count(*) from tblServerBoss z where z.bossid=a.bossid) servercnt ";		    
 							sqlstr += "from tblboss a ";
 							sqlstr += "where bossid='"+bossid+"'";
 						
@@ -940,11 +999,14 @@ client.on('message', message => {
 						      	var row = result[key];
 						      	uniqid = row.uniqid;
 						      	cnt = row.cnt;
+						      	servercnt = row.servercnt;
 						      	isNotExist = false;
 
 						        var	update_sql = "";
+						        var update_sql_server = "";
 						        var q_userid = mysql.raw("'"+authorid+"'");
 						        var q_bossid = mysql.raw("'"+bossid+"'");
+						        var q_serverid = mysql.raw("'"+serverid+"'");
 								var q_kill = "";
 								var q_reborn = "";
 
@@ -967,13 +1029,23 @@ client.on('message', message => {
 					        		update_sql = mysql.format('INSERT tblUserBoss (bossid,userid,killtime,reborntime) VALUES (?, ?, ?, ?) ', [q_bossid, q_userid, q_kill, q_reborn   ]);
 					        	}
 								
+								// 同步更新tblServerBoss時間
+					        	if(servercnt>0){
+					        		update_sql_server = mysql.format('UPDATE tblServerBoss SET killtime = ? ,reborntime = ?, userid = ? WHERE serverid= ? and bossid = ? ', [q_kill, q_reborn , q_userid , q_serverid , q_bossid ]);
+					        	}else{
+					        		update_sql_server = mysql.format('INSERT tblServerBoss (bossid,serverid,userid,killtime,reborntime) VALUES (?, ?, ?, ?, ?) ', [q_bossid, q_serverid, q_userid, q_kill, q_reborn ]);
+					        	}
+
 
 								pool.query(update_sql, function (error, results, fields) {
 								  if (error) handleError(error);
-								  message.channel.send(message.author+",野王編號 【"+bossid+"】 下次重生時間已更新!!");
+								  pool.query(update_sql_server, function (error1, results1, fields1) {
+								  	if (error1) handleError(error1);
+								  	message.channel.send(message.author+",野王編號 【"+bossid+"】 下次重生時間已更新!!");
+								  })
 								})
 
-
+								/*
 					        	if(killtime==""){
 					        		q_kill = mysql.raw("DATE_ADD(NOW(),INTERVAL 477 MINUTE)");
 									q_reborn = mysql.raw("DATE_ADD(DATE_ADD(NOW(),INTERVAL 477 MINUTE),INTERVAL (cycletime)*60 MINUTE)");
@@ -981,6 +1053,7 @@ client.on('message', message => {
 					        		q_kill = mysql.raw("'"+killtime+"'");
 									q_reborn = mysql.raw("DATE_ADD('"+killtime+"',INTERVAL (cycletime)*60 MINUTE)");
 					        	}
+
 								var update_sql1 = mysql.format('UPDATE tblboss SET killtime = ? ,reborntime = ? WHERE bossid = ? ', [q_kill, q_reborn , q_bossid ]);								
 
 								pool.query(update_sql1, function (error, results, fields) {
@@ -989,7 +1062,7 @@ client.on('message', message => {
 								  	console.log(update_sql1);
 								  } 
 								})
-
+								*/
 
 
 						    });
@@ -1008,23 +1081,24 @@ client.on('message', message => {
 
 				case 'bossall':
 
-					for(mapi=1;mapi<=4;mapi++){
+					for(mapi=1;mapi<=5;mapi++){
 
-						var sqlstr = "select bossid,imgurl ";			    
-							sqlstr += ",left(convert(killtime,DATETIME),16) as killed ";
-							sqlstr += ",left(convert(reborntime,DATETIME),16) as reborn ";
-							sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
-							sqlstr += ",cycletime ";
-							sqlstr += ",bossimg  ";
-							sqlstr += ",rank  ";
-							sqlstr += ",bossname,bossname_kr  ";
-							sqlstr += ",location,location_kr ";
-							sqlstr += ",lv ";	
-							sqlstr += "from tblboss a ";
-							sqlstr += "where bossid like '"+mapi+"-%' ";
+						var sqlstr = "select a.bossid,a.imgurl ";			    
+							sqlstr += ",left(convert(b.killtime,DATETIME),16) as killed ";
+							sqlstr += ",left(convert(b.reborntime,DATETIME),16) as reborn ";
+							sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , b.reborntime ) AS dues ";
+							sqlstr += ",a.cycletime ";
+							sqlstr += ",a.bossimg  ";
+							sqlstr += ",a.rank  ";
+							sqlstr += ",a.bossname,a.bossname_kr  ";
+							sqlstr += ",a.location,a.location_kr ";
+							sqlstr += ",a.lv ";	
+							sqlstr += "from tblboss a LEFT OUTER JOIN (SELECT * from tblServerBoss WHERE serverid='"+serverid+"') b ";
+							sqlstr += "on a.bossid = b.bossid ";
+							sqlstr += "where a.bossid like '"+mapi+"-%' ";
 							sqlstr += "order by 1 ";	
 						const msg = new Discord.RichEmbed();
-						msg.setTitle("第"+mapi+"區BOSS清單");
+						msg.setTitle("伺服器:"+serverid+" 第"+mapi+"區BOSS清單");
 						msg.setColor("#0099ff");
 
 
@@ -1089,21 +1163,22 @@ client.on('message', message => {
 				case 'boss':
 
 					var bossmsg = new Discord.RichEmbed();
-					bossmsg.setTitle("待出BOSS清單");
+					bossmsg.setTitle("伺服器:"+serverid+" 待出BOSS清單");
 					bossmsg.setColor("#ff0000");
 
-					var sqlstr = "select bossid,imgurl ";			    
-						sqlstr += ",left(convert(killtime,DATETIME),16) as killed ";
-						sqlstr += ",left(convert(reborntime,DATETIME),16) as reborn ";
-						sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime ) AS dues ";
-						sqlstr += ",cycletime ";
-						sqlstr += ",bossimg  ";
-						sqlstr += ",rank  ";
-						sqlstr += ",bossname,bossname_kr  ";
-						sqlstr += ",location,location_kr ";
-						sqlstr += ",lv ";		
-						sqlstr += "from tblboss a ";
-						sqlstr += "where reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
+					var sqlstr = "select a.bossid,a.imgurl ";			    
+						sqlstr += ",left(convert(b.killtime,DATETIME),16) as killed ";
+						sqlstr += ",left(convert(b.reborntime,DATETIME),16) as reborn ";
+						sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , b.reborntime ) AS dues ";
+						sqlstr += ",a.cycletime ";
+						sqlstr += ",a.bossimg  ";
+						sqlstr += ",a.rank  ";
+						sqlstr += ",a.bossname,a.bossname_kr  ";
+						sqlstr += ",a.location,a.location_kr ";
+						sqlstr += ",a.lv ";	
+						sqlstr += "from tblboss a LEFT OUTER JOIN (SELECT * from tblServerBoss WHERE serverid='"+serverid+"') b ";
+						sqlstr += "on a.bossid = b.bossid ";
+						sqlstr += "where b.reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
 						sqlstr += "order by 4 ";	
 
 					pool.query(sqlstr, function(err, rows, fields) {
@@ -1188,7 +1263,7 @@ function handleError (error) {
 
 function checkuser(authid,fncallback){
 	checklogin(authid).then(function(logstat){
-		if(logstat){
+		if(logstat != null){
 			fncallback(logstat)
 		}else{
 			message.channel.send(logstat);		
@@ -1201,7 +1276,7 @@ function checkuser(authid,fncallback){
 function checklogin(authorid) {
   return new Promise(function(resolve, reject) { 	
 	var q_authorid = mysql.raw("'"+authorid+"'");
-	var sqlstr = "select uniqid,left(convert(limitdate,DATETIME),16) as limitdate ";			    
+	var sqlstr = "select uniqid,left(convert(limitdate,DATETIME),16) as limitdate,serverid ";			    
 		sqlstr += "from tblUser ";
 		sqlstr += "where userid= ? ";
 	sqlstr = mysql.format(sqlstr, [ q_authorid ] );
@@ -1209,13 +1284,17 @@ function checklogin(authorid) {
 	pool.query(sqlstr, function(err, result, fields) {
 	    if (err) handleError(err);
 	    if(result.length>0){
-	    	resolve(true);
+	    	resolve(result);
 	    }else{
-	    	resolve(false);
+	    	resolve(null);
 	    }
 	});
   })
 }
+
+
+
+
 
 function query_sql(mysql_sql){
 	return new Promise(function(resolve, reject) { 	
