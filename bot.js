@@ -526,16 +526,17 @@ client.on('message', message => {
 		//以下操作都需要註冊
 		checklogin(authorid).then(function(login){
 			if(login != null){
-
 			var serverid = login[0].serverid;	
-			if(serverid == null || serverid == "" || serverid == undefined){
-				var msg = "伺服器ID未設定, "+message.author+"!\n";
-				msg += "請先設定伺服器ID，設定方式如下：\n";
-				msg += prefix+"server 伺服器ID：伺服器ID例如 4-4 , 13-2 , 6-6。";
-				message.channel.send(msg);
-				return;
+			
+			if(command!='server'){
+				if(serverid == null || serverid == "" || serverid == undefined){
+					var msg = "伺服器ID未設定, "+message.author+"!\n";
+					msg += "請先設定伺服器ID，設定方式如下：\n";
+					msg += prefix+"server 伺服器ID：伺服器ID例如 4-4 , 13-2 , 6-6。";
+					message.channel.send(msg);
+					return;
+				}			
 			}
-
 
 			switch(command){
 				case 'server':
