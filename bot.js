@@ -218,7 +218,7 @@ function checkboss_channel(){
 		sqlstr += ",a.location,a.location_kr ";
 		sqlstr += ",a.lv ";	
 		sqlstr += ",b.serverid ";	
-		sqlstr += "from tblboss a LEFT OUTER JOIN (SELECT * from tblServerBoss WHERE serverid='"+serverid+"') b ";
+		sqlstr += "from tblboss a INNER JOIN tblServerBoss b ";
 		sqlstr += "on a.bossid = b.bossid ";
 		sqlstr += "where b.reborntime IS NOT null ";
 		sqlstr += "and TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , b.reborntime )  in (0 ,5 ,10) ";
