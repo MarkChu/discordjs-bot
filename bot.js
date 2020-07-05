@@ -460,6 +460,7 @@ client.on('message', message => {
 		.addField(prefix+"server 伺服器ID", '設定所在天2M伺服器，例如4-4, 13-2, 6-6。')
 		.addField(prefix+"map", '列出野王地圖及編號。')
 		.addField(prefix+"boss", '列出目前有紀錄的BOSS重生時間。')
+		.addField(prefix+"boss 野王編號", '列出特定BOSS的資料。')
 		.addField(prefix+"bossall", '列出目前建檔的BOSS。')
 		.addField(prefix+"kill 野王編號", '更新擊殺野王的時間，會使用系統時間-3分鐘 。')
 		.addField(prefix+"kill 野王編號 日期時間", '更新擊殺野王的時間，時間輸入範例如: 2019/12/10 11:50 轉換成 201912101150 。')
@@ -1168,71 +1169,164 @@ client.on('message', message => {
 
 				case 'boss':
 
-					var bossmsg = new Discord.RichEmbed();
-					bossmsg.setTitle("伺服器:"+serverid+" 待出BOSS清單");
-					bossmsg.setColor("#ff0000");
+					if (!args.length) {
 
-					var sqlstr = "select a.bossid,a.imgurl2 as imgurl ";			    
-						sqlstr += ",left(convert(b.killtime,DATETIME),16) as killed ";
-						sqlstr += ",left(convert(b.reborntime,DATETIME),16) as reborn ";
-						sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , b.reborntime ) AS dues ";
-						sqlstr += ",a.cycletime ";
-						sqlstr += ",a.bossimg  ";
-						sqlstr += ",a.rank  ";
-						sqlstr += ",a.bossname,a.bossname_kr  ";
-						sqlstr += ",a.location,a.location_kr ";
-						sqlstr += ",a.lv ";	
-						sqlstr += "from tblboss a LEFT OUTER JOIN (SELECT * from tblServerBoss WHERE serverid='"+serverid+"') b ";
-						sqlstr += "on a.bossid = b.bossid ";
-						sqlstr += "where b.reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
-						sqlstr += "order by 4 ";	
+						var bossmsg = new Discord.RichEmbed();
+						bossmsg.setTitle("伺服器:"+serverid+" 待出BOSS清單");
+						bossmsg.setColor("#ff0000");
 
-					pool.query(sqlstr, function(err, rows, fields) {
-					    if (err) handleError(err);
-					    	
-						var recordset = rows;
-						var rowscnt = 0;
+						var sqlstr = "select a.bossid,a.imgurl2 as imgurl ";			    
+							sqlstr += ",left(convert(b.killtime,DATETIME),16) as killed ";
+							sqlstr += ",left(convert(b.reborntime,DATETIME),16) as reborn ";
+							sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , b.reborntime ) AS dues ";
+							sqlstr += ",a.cycletime ";
+							sqlstr += ",a.bossimg  ";
+							sqlstr += ",a.rank  ";
+							sqlstr += ",a.bossname,a.bossname_kr  ";
+							sqlstr += ",a.location,a.location_kr ";
+							sqlstr += ",a.lv ";	
+							sqlstr += "from tblboss a LEFT OUTER JOIN (SELECT * from tblServerBoss WHERE serverid='"+serverid+"') b ";
+							sqlstr += "on a.bossid = b.bossid ";
+							sqlstr += "where b.reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
+							sqlstr += "order by 4 ";	
 
-						for(i=0;i<recordset.length;i++)
-						{
-							rowscnt ++;
-							var row = recordset[i];
-							var rank = "";
-							switch(row.rank){
-								case 'r':
-									rank = "紅";
-									break;
-								case 'b':
-									rank = "藍";
-									break;
-								case 'p':
-									rank = "紫";
-									break;
+						pool.query(sqlstr, function(err, rows, fields) {
+						    if (err) handleError(err);
+						    	
+							var recordset = rows;
+							var rowscnt = 0;
+
+							for(i=0;i<recordset.length;i++)
+							{
+								rowscnt ++;
+								var row = recordset[i];
+								var rank = "";
+								switch(row.rank){
+									case 'r':
+										rank = "紅";
+										break;
+									case 'b':
+										rank = "藍";
+										break;
+									case 'p':
+										rank = "紫";
+										break;
+								}
+								var bossname = row.bossname_kr+(row.bossname!=row.bossname_kr?" "+row.bossname:"");
+								var bosslocation = row.location_kr+(row.location!=row.location_kr?" "+row.location:"");
+
+
+								var msgtitle = row.bossid+" "+ bossname + " ("+rank+") ";							
+								var msgcontent = "地點："+bosslocation+"\n";
+									msgcontent += "預計時間："+(row.reborn == null ? "無":row.reborn) + " \n";
+									msgcontent += "距離現在："+row.dues + "分鐘 \n";									
+								
+								bossmsg.addField(msgtitle,msgcontent);
+
+
+								//msgcontent += "【" + row.bossid +" "+ row.bossname + " ("+rank+") 在 "+row.location+" ，" + " - 預計時間:"+row.reborn+" - 距離現在："+ row.dues +"分鐘】\n";
+								
+								//message.channel.send(msgcontent);						
 							}
-							var bossname = row.bossname_kr+(row.bossname!=row.bossname_kr?" "+row.bossname:"");
-							var bosslocation = row.location_kr+(row.location!=row.location_kr?" "+row.location:"");
+							if(rowscnt>0){
+								message.channel.send(bossmsg);	
+							}else{
+								message.channel.send("目前的野王都沒有擊殺記錄喔!!");	
+							}
+							//console.log(msgcontent);
+
+						});
+
+					}else{
+						var bossid = args[0];
+
+						var sqlstr = "select a.bossid,a.imgurl2 as imgurl ";			    
+							sqlstr += ",left(convert(b.killtime,DATETIME),16) as killed ";
+							sqlstr += ",left(convert(b.reborntime,DATETIME),16) as reborn ";
+							sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , b.reborntime ) AS dues ";
+							sqlstr += ",a.cycletime ";
+							sqlstr += ",a.bossimg  ";
+							sqlstr += ",a.rank  ";
+							sqlstr += ",a.bossname,a.bossname_kr  ";
+							sqlstr += ",a.location,a.location_kr ";
+							sqlstr += ",a.lv ";	
+							sqlstr += ",a.url ";	
+							sqlstr += "from tblboss a LEFT OUTER JOIN (SELECT * from tblServerBoss WHERE serverid='"+serverid+"') b ";
+							sqlstr += "on a.bossid = b.bossid ";
+							sqlstr += "where a.bossid = '"+bossid+"' ";
+
+							pool.query(sqlstr, function(err, recordset, fields) {
+								if (err) handleError(err);
+							    
+								var msgcontent = "";
+								if (recordset.length > 0){
+									var row = recordset[0];
+									var rank = "";
+									var background = "";
+									switch(row.rank){
+										case 'r':
+											rank = "紅";
+											background = "#ff0000";
+											break;
+										case 'b':
+											rank = "藍";
+											background = "#0000ff";
+											break;
+										case 'p':
+											rank = "紫";
+											background = "#8340ff";
+											break;
+										default:
+											rank = "";
+											background = "#ffffff";					
+											break;
+									}
+
+						        	const msg = new Discord.RichEmbed();
+
+									var bossname = row.bossname_kr+(row.bossname!=row.bossname_kr?" "+row.bossname:"");
+									var bosslocation = row.location_kr+(row.location!=row.location_kr?" "+row.location:"");
+									var url = "http://lineage2m.inven.co.kr/dataninfo/boss/";
+									if(row.url!=null && row.url!=""){
+										url = row.url;
+									}
+
+						        	msg.setColor(background)
+						            .setTitle("野王資料查看")
+						            .setURL(url)
+						            .addField("野王編號", row.bossid + " ("+rank+") " )
+						            .addField("野王名稱", bossname )
+						            .addField("等級", row.lv)
+						            .addField("出現地區", bosslocation )
+						            .addField("上次擊殺時間", row.killed )
+						            .addField("預計出現時間", row.reborn )
+						            .addField("重生時間", row.cycletime + " 小時");
+
+									if(row.imgurl!=null&&row.imgurl!=""){
+							            msg.setImage(row.imgurl)
+									}     
+
+									//if(row.bossimg!=null&&row.bossimg!=""){
+							        //    msg.setImage(row.bossimg)
+									//}        	
+							        msg.setTimestamp();
 
 
-							var msgtitle = row.bossid+" "+ bossname + " ("+rank+") ";							
-							var msgcontent = "地點："+bosslocation+"\n";
-								msgcontent += "預計時間："+(row.reborn == null ? "無":row.reborn) + " \n";
-								msgcontent += "距離現在："+row.dues + "分鐘 \n";									
-							
-							bossmsg.addField(msgtitle,msgcontent);
+									message.channel.send(msg);
+
+								}else{
+									message.channel.send('找不到 【'+bossid+'】 的資料.');
+									break;
+								}	
 
 
-							//msgcontent += "【" + row.bossid +" "+ row.bossname + " ("+rank+") 在 "+row.location+" ，" + " - 預計時間:"+row.reborn+" - 距離現在："+ row.dues +"分鐘】\n";
-							
-							//message.channel.send(msgcontent);						
-						}
-						if(rowscnt>0){
-							message.channel.send(bossmsg);	
-						}else{
-							message.channel.send("目前的野王都沒有擊殺記錄喔!!");	
-						}
-						//console.log(msgcontent);
+							});
 
-					});
+
+
+					}
+
+					
 
 					//message.channel.send('test!');
 					break;
