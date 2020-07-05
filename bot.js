@@ -1316,7 +1316,6 @@ client.on('message', message => {
 
 								}else{
 									message.channel.send('找不到 【'+bossid+'】 的資料.');
-									break;
 								}	
 
 
