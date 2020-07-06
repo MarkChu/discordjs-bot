@@ -464,6 +464,7 @@ client.on('message', message => {
 		.addField(prefix+"bossall", '列出目前建檔的BOSS。')
 		.addField(prefix+"kill 野王編號", '更新擊殺野王的時間，會使用系統時間-3分鐘 。')
 		.addField(prefix+"kill 野王編號 日期時間", '更新擊殺野王的時間，時間輸入範例如: 2019/12/10 11:50 轉換成 201912101150 。')
+		.addField(prefix+"kill 野王編號 時間", '更新擊殺野王的時間，會使用系統今日日期時間-3分鐘擊殺野王的時間，時間輸入範例如: 11:50 轉換成 1150 。')
 		.addField(prefix+"reset 野王編號", '清空特定野王的擊殺時間與重生時間。')
 		.addField(prefix+"maintain 日期時間", '維護時間，全部的王的重生時間重置。')
 		.addField(prefix+"notify", '顯示目前的設置的頻道通知狀態。')
@@ -981,8 +982,21 @@ client.on('message', message => {
 						if(args.length>1){
 							input_time = args[1];
 							if(input_time.length!=12){
-								message.channel.send("時間輸入範例如: 2019/12/10 11:50 轉換成 201912101150");
-								break;
+								if(input_time.length!=4){	
+									message.channel.send("時間輸入範例如: 2019/12/10 11:50 轉換成 201912101150");
+									break;
+								}else{
+									var datestr = new Date().toISOString().
+												  replace(/T/, ' ').
+												  replace(/-/, '').
+												  .substr(0, 10);
+									killtime += datestr+" "+input_time.substr(0,2)+":"+input_time.substr(2,2);	
+									if(isNaN(Date.parse(killtime))){
+										message.channel.send("時間輸入範例如: 11:50 轉換成 1150");
+										//message.author.send
+										break;	
+									}
+								}
 							}else{
 								killtime += input_time.substr(0,4) +"/"+input_time.substr(4,2)+"/"+input_time.substr(6,2)+" "+input_time.substr(8,2)+":"+input_time.substr(10,2);
 								if(isNaN(Date.parse(killtime))){
