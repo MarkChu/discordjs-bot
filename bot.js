@@ -207,8 +207,8 @@ async function hooksend(wbid,wbtoken,msg){
 function auto_updateboss(){
 
 	var sqlstr = " UPDATE tblServerBoss ";
-	sqlstr = sqlstr + " SET killtime = DATE_ADD(reborntime,INTERVAL 10 MINUTE) ";
-	sqlstr = sqlstr + " ,reborntime = DATE_ADD(DATE_ADD(reborntime,INTERVAL 470 MINUTE),INTERVAL (select cycletime FROM tblboss z WHERE z.bossid=tblServerBoss.bossid)*60 MINUTE) ";
+	sqlstr = sqlstr + " SET killtime = reborntime ";
+	sqlstr = sqlstr + " ,reborntime = DATE_ADD(reborntime ,INTERVAL (select cycletime FROM tblboss z WHERE z.bossid=tblServerBoss.bossid)*60 MINUTE) ";
 	sqlstr = sqlstr + " ,isauto = 1 ";
 	sqlstr = sqlstr + " where TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime )  < -60 ";
 
