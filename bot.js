@@ -231,7 +231,8 @@ function checkboss_channel(){
 		sqlstr += ",a.location,a.location_kr ";
 		sqlstr += ",a.lv ";	
 		sqlstr += ",b.serverid ";
-		sqlstr += ",a.url ";	
+		sqlstr += ",a.url ";
+		sqlstr += ",b.isauto ";		
 		sqlstr += "from tblboss a INNER JOIN tblServerBoss b ";
 		sqlstr += "on a.bossid = b.bossid ";
 		sqlstr += "where b.reborntime IS NOT null ";
@@ -267,8 +268,12 @@ function checkboss_channel(){
 					background = "#ffffff";					
 					break;
 			}
+			var autoflag = "";
+			if(row.isauto=="1"){
+				autoflag = "【自動展延】";
+			}
 
-        	var msgcontent = row.serverid + " 野王出沒通知：【" + row.bossid +" "+ row.bossname + " ("+rank+") 在 "+row.location+ "】";
+        	var msgcontent = row.serverid + " 野王出沒通知："+autoflag+"【" + row.bossid +" "+ row.bossname + " ("+rank+") 在 "+row.location+ "】";
         	//console.log(row);
         	if(parseInt(row.dues)==0){
         		msgcontent += " 目前已經重生，趕快去吃王吧!!";
@@ -901,7 +906,7 @@ client.on('message', message => {
 
 						// server boss
 						var q_serverid = mysql.raw("'"+serverid+"'");
-						var update_sql = mysql.format('UPDATE tblServerBoss SET killtime = ? ,reborntime = ? ,userid = ? WHERE serverid = ?  ', [q_kill, q_reborn, q_userid, q_serverid ]);
+						var update_sql = mysql.format('UPDATE tblServerBoss SET killtime = ? ,reborntime = ? ,userid = ?, isauto=0 WHERE serverid = ?  ', [q_kill, q_reborn, q_userid, q_serverid ]);
 
 						pool.query(update_sql, function (error, results, fields) {
 						  if (error) handleError(error);
@@ -1070,9 +1075,9 @@ client.on('message', message => {
 								
 								// 同步更新tblServerBoss時間
 					        	if(servercnt>0){
-					        		update_sql_server = mysql.format('UPDATE tblServerBoss SET killtime = ? ,reborntime = ?, userid = ? WHERE serverid= ? and bossid = ? ', [q_kill, q_reborn , q_userid , q_serverid , q_bossid ]);
+					        		update_sql_server = mysql.format('UPDATE tblServerBoss SET killtime = ? ,reborntime = ?, userid = ?, isauto=0 WHERE serverid= ? and bossid = ? ', [q_kill, q_reborn , q_userid , q_serverid , q_bossid ]);
 					        	}else{
-					        		update_sql_server = mysql.format('INSERT tblServerBoss (bossid,serverid,userid,killtime,reborntime) VALUES (?, ?, ?, ?, ?) ', [q_bossid, q_serverid, q_userid, q_kill, q_reborn ]);
+					        		update_sql_server = mysql.format('INSERT tblServerBoss (bossid,serverid,userid,killtime,reborntime,isauto) VALUES (?, ?, ?, ?, ?, 0) ', [q_bossid, q_serverid, q_userid, q_kill, q_reborn ]);
 					        	}
 
 
@@ -1132,6 +1137,7 @@ client.on('message', message => {
 							sqlstr += ",a.bossname,a.bossname_kr  ";
 							sqlstr += ",a.location,a.location_kr ";
 							sqlstr += ",a.lv ";	
+							sqlstr += ",b.isauto ";	
 							sqlstr += "from tblboss a LEFT OUTER JOIN (SELECT * from tblServerBoss WHERE serverid='"+serverid+"') b ";
 							sqlstr += "on a.bossid = b.bossid ";
 							sqlstr += "where a.bossid like '"+mapi+"-%' ";
@@ -1166,7 +1172,12 @@ client.on('message', message => {
 								var bossname = row.bossname_kr+(row.bossname!=row.bossname_kr?" "+row.bossname:"");
 								var bosslocation = row.location_kr+(row.location!=row.location_kr?" "+row.location:"");
 
-								var msgtitle = row.bossid+" "+ bossname + " ("+rank+") ";							
+								var autoflag = "";
+								if(row.isauto=="1"){
+									autoflag = "【自動展延】";
+								}
+
+								var msgtitle = row.bossid+" "+ bossname + " ("+rank+") " + autoflag;							
 								var msgcontent = "地點："+bosslocation+"\n";
 									msgcontent += "前次擊殺時間："+(row.killed == null ? "無":row.killed) + " \n";
 									if(row.cycletime==null){
@@ -1217,6 +1228,7 @@ client.on('message', message => {
 							sqlstr += ",a.bossname,a.bossname_kr  ";
 							sqlstr += ",a.location,a.location_kr ";
 							sqlstr += ",a.lv ";	
+							sqlstr += ",b.isauto ";	
 							sqlstr += "from tblboss a LEFT OUTER JOIN (SELECT * from tblServerBoss WHERE serverid='"+serverid+"') b ";
 							sqlstr += "on a.bossid = b.bossid ";
 							sqlstr += "where b.reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
@@ -1247,8 +1259,12 @@ client.on('message', message => {
 								var bossname = row.bossname_kr+(row.bossname!=row.bossname_kr?" "+row.bossname:"");
 								var bosslocation = row.location_kr+(row.location!=row.location_kr?" "+row.location:"");
 
+								var autoflag = "";
+								if(row.isauto=="1"){
+									autoflag = "【自動展延】";
+								}
 
-								var msgtitle = row.bossid+" "+ bossname + " ("+rank+") ";							
+								var msgtitle = row.bossid+" "+ bossname + " ("+rank+") " + autoflag ;							
 								var msgcontent = "地點："+bosslocation+"\n";
 									msgcontent += "預計時間："+(row.reborn == null ? "無":row.reborn) + " \n";
 									msgcontent += "距離現在："+row.dues + "分鐘 \n";									
@@ -1282,7 +1298,8 @@ client.on('message', message => {
 							sqlstr += ",a.bossname,a.bossname_kr  ";
 							sqlstr += ",a.location,a.location_kr ";
 							sqlstr += ",a.lv ";	
-							sqlstr += ",a.url ";	
+							sqlstr += ",a.url ";
+							sqlstr += ",b.isauto ";		
 							sqlstr += "from tblboss a LEFT OUTER JOIN (SELECT * from tblServerBoss WHERE serverid='"+serverid+"') b ";
 							sqlstr += "on a.bossid = b.bossid ";
 							sqlstr += "where a.bossid = '"+bossid+"' ";
