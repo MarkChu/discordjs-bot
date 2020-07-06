@@ -40,6 +40,7 @@ client.once('ready', () => {
 	  //每到0秒時執行一次(每分鐘)
 	  //checkboss();
 	  checkboss_channel();
+	  auto_updateboss();
 	});
 
 	//testnotify();
@@ -203,7 +204,19 @@ async function hooksend(wbid,wbtoken,msg){
 	}
 }
 
+function auto_updateboss(){
 
+	var sqlstr = " UPDATE tblServerBoss ";
+	sqlstr = sqlstr + " SET killtime = DATE_ADD(reborntime,INTERVAL 10 MINUTE) ";
+	sqlstr = sqlstr + " ,reborntime = DATE_ADD(DATE_ADD(reborntime,INTERVAL 470 MINUTE),INTERVAL (select cycletime FROM tblboss z WHERE z.bossid=tblServerBoss.bossid)*60 MINUTE) ";
+	sqlstr = sqlstr + " ,isauto = 1 ";
+	sqlstr = sqlstr + " where TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime )  < -60 ";
+
+  	exec_sql(sqlstr).then(function(rtn1){
+  		console.log('auto updateboss..');
+	});
+
+}
 
 function checkboss_channel(){
 
