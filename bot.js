@@ -209,7 +209,7 @@ function auto_updateboss(){
 	var sqlstr = " UPDATE tblServerBoss ";
 	sqlstr = sqlstr + " SET killtime = reborntime ";
 	sqlstr = sqlstr + " ,reborntime = DATE_ADD(reborntime ,INTERVAL (select cycletime FROM tblboss z WHERE z.bossid=tblServerBoss.bossid)*60 MINUTE) ";
-	sqlstr = sqlstr + " ,isauto = 1 ";
+	sqlstr = sqlstr + " ,isauto = isauto + 1 ";
 	sqlstr = sqlstr + " where TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , reborntime )  < -60 ";
 
   	exec_sql(sqlstr).then(function(rtn1){
@@ -269,8 +269,8 @@ function checkboss_channel(){
 					break;
 			}
 			var autoflag = "";
-			if(row.isauto=="1"){
-				autoflag = "【自動展延】";
+			if(row.isauto!="0"){
+				autoflag = "【自動展延"+row.isauto+"次】";
 			}
 
         	var msgcontent = row.serverid + " 野王出沒通知："+autoflag+"【" + row.bossid +" "+ row.bossname + " ("+rank+") 在 "+row.location+ "】";
@@ -1173,8 +1173,8 @@ client.on('message', message => {
 								var bosslocation = row.location_kr+(row.location!=row.location_kr?" "+row.location:"");
 
 								var autoflag = "";
-								if(row.isauto=="1"){
-									autoflag = "【自動展延】";
+								if(row.isauto!="0"){
+									autoflag = "【自動展延"+row.isauto+"次】";
 								}
 
 								var msgtitle = row.bossid+" "+ bossname + " ("+rank+") " + autoflag;							
@@ -1260,8 +1260,8 @@ client.on('message', message => {
 								var bosslocation = row.location_kr+(row.location!=row.location_kr?" "+row.location:"");
 
 								var autoflag = "";
-								if(row.isauto=="1"){
-									autoflag = "【自動展延】";
+								if(row.isauto!="0"){
+									autoflag = "【自動展延"+row.isauto+"次】";
 								}
 
 								var msgtitle = row.bossid+" "+ bossname + " ("+rank+") " + autoflag ;							
