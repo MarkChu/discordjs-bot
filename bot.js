@@ -892,8 +892,8 @@ client.on('message', message => {
 						}
 
 						var q_userid = mysql.raw("'"+authorid+"'");
-						var q_kill = mysql.raw("DATE_ADD('"+fixtime+"',INTERVAL 10 MINUTE )");
-						var q_reborn = mysql.raw("DATE_ADD('"+fixtime+"',INTERVAL (select cycletime FROM tblboss z WHERE z.bossid=tblUserBoss.bossid)*60+10 MINUTE )");
+						var q_kill = mysql.raw("'"+fixtime+"'");
+						var q_reborn = mysql.raw("DATE_ADD('"+fixtime+"',INTERVAL (select cycletime FROM tblboss z WHERE z.bossid=tblUserBoss.bossid)*60 MINUTE )");
 
 
 						// user boss
@@ -904,9 +904,13 @@ client.on('message', message => {
 						  //message.channel.send(message.author+",野王重生時間已全部重置!!");
 						})
 
+
 						// server boss
 						var q_serverid = mysql.raw("'"+serverid+"'");
-						var update_sql = mysql.format('UPDATE tblServerBoss SET killtime = ? ,reborntime = ? ,userid = ?, isauto=0 WHERE serverid = ?  ', [q_kill, q_reborn, q_userid, q_serverid ]);
+						var q_kill1 = mysql.raw("'"+fixtime+"'");
+						var q_reborn1 = mysql.raw("DATE_ADD('"+fixtime+"',INTERVAL (select cycletime FROM tblboss z WHERE z.bossid=tblServerBoss.bossid)*60 MINUTE )");
+
+						var update_sql = mysql.format('UPDATE tblServerBoss SET killtime = ? ,reborntime = ? ,userid = ?, isauto=0 WHERE serverid = ?  ', [q_kill1, q_reborn1, q_userid, q_serverid ]);
 
 						pool.query(update_sql, function (error, results, fields) {
 						  if (error) handleError(error);
