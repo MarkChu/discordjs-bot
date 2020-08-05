@@ -1286,7 +1286,7 @@ client.on('message', message => {
 									if(rowscnt>0){
 										message.channel.send(bossmsg);	
 									}else{
-										message.channel.send("目前 "+mapi+" 區的野王都沒有擊殺記錄喔!!");	
+										message.channel.send("目前野王都沒有擊殺記錄喔!!");	
 									}
 									//console.log(msgcontent);
 
