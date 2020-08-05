@@ -1242,11 +1242,10 @@ client.on('message', message => {
 
 
 								    var bossmsg = new Discord.RichEmbed();
-									bossmsg.setTitle("伺服器:"+serverid+" "+mapi+" 區 待出BOSS清單");
+									bossmsg.setTitle("伺服器:"+serverid+" 待出BOSS清單");
 									bossmsg.setColor("#ff0000");	
 									var recordset = rows;
 									var rowscnt = 0;
-									console.log(mapi+" count:"+recordset.length);
 
 									for(i=0;i<recordset.length;i++)
 									{
