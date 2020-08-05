@@ -1220,10 +1220,6 @@ client.on('message', message => {
 
 						for(mapi=1;mapi<=5;mapi++){
 
-							var bossmsg = new Discord.RichEmbed();
-							bossmsg.setTitle("伺服器:"+serverid+" "+mapi+" 區 待出BOSS清單");
-							bossmsg.setColor("#ff0000");
-
 							var sqlstr = "select a.bossid,a.imgurl2 as imgurl ";			    
 								sqlstr += ",left(convert(b.killtime,DATETIME),16) as killed ";
 								sqlstr += ",left(convert(b.reborntime,DATETIME),16) as reborn ";
@@ -1243,7 +1239,11 @@ client.on('message', message => {
 
 								pool.query(sqlstr, function(err, rows, fields) {
 								    if (err) handleError(err);
-								    	
+
+
+								    var bossmsg = new Discord.RichEmbed();
+									bossmsg.setTitle("伺服器:"+serverid+" "+mapi+" 區 待出BOSS清單");
+									bossmsg.setColor("#ff0000");	
 									var recordset = rows;
 									var rowscnt = 0;
 									console.log(mapi+" count:"+recordset.length);
