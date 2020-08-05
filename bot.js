@@ -1218,76 +1218,86 @@ client.on('message', message => {
 
 					if (!args.length) {
 
-						var bossmsg = new Discord.RichEmbed();
-						bossmsg.setTitle("伺服器:"+serverid+" 待出BOSS清單");
-						bossmsg.setColor("#ff0000");
+						for(mapi=1;mapi<=5;mapi++){
 
-						var sqlstr = "select a.bossid,a.imgurl2 as imgurl ";			    
-							sqlstr += ",left(convert(b.killtime,DATETIME),16) as killed ";
-							sqlstr += ",left(convert(b.reborntime,DATETIME),16) as reborn ";
-							sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , b.reborntime ) AS dues ";
-							sqlstr += ",a.cycletime ";
-							sqlstr += ",a.bossimg  ";
-							sqlstr += ",a.rank  ";
-							sqlstr += ",a.bossname,a.bossname_kr  ";
-							sqlstr += ",a.location,a.location_kr ";
-							sqlstr += ",a.lv ";	
-							sqlstr += ",b.isauto ";	
-							sqlstr += "from tblboss a LEFT OUTER JOIN (SELECT * from tblServerBoss WHERE serverid='"+serverid+"') b ";
-							sqlstr += "on a.bossid = b.bossid ";
-							sqlstr += "where b.reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
-							sqlstr += "order by 4 ";	
+							var bossmsg = new Discord.RichEmbed();
+							bossmsg.setTitle("伺服器:"+serverid+" "+mapi+" 區 待出BOSS清單");
+							bossmsg.setColor("#ff0000");
 
-						pool.query(sqlstr, function(err, rows, fields) {
-						    if (err) handleError(err);
-						    	
-							var recordset = rows;
-							var rowscnt = 0;
+							var sqlstr = "select a.bossid,a.imgurl2 as imgurl ";			    
+								sqlstr += ",left(convert(b.killtime,DATETIME),16) as killed ";
+								sqlstr += ",left(convert(b.reborntime,DATETIME),16) as reborn ";
+								sqlstr += ",TIMESTAMPDIFF(MINUTE, DATE_ADD(NOW(),INTERVAL 8 HOUR ) , b.reborntime ) AS dues ";
+								sqlstr += ",a.cycletime ";
+								sqlstr += ",a.bossimg  ";
+								sqlstr += ",a.rank  ";
+								sqlstr += ",a.bossname,a.bossname_kr  ";
+								sqlstr += ",a.location,a.location_kr ";
+								sqlstr += ",a.lv ";	
+								sqlstr += ",b.isauto ";	
+								sqlstr += "from tblboss a LEFT OUTER JOIN (SELECT * from tblServerBoss WHERE serverid='"+serverid+"') b ";
+								sqlstr += "on a.bossid = b.bossid ";
+								sqlstr += "where b.reborntime > DATE_ADD(NOW(),INTERVAL 8 HOUR ) ";
+								sqlstr += "and a.bossid like '"+mapi+"-%' ";
+								sqlstr += "order by 4 ";	
 
-							for(i=0;i<recordset.length;i++)
-							{
-								rowscnt ++;
-								var row = recordset[i];
-								var rank = "";
-								switch(row.rank){
-									case 'r':
-										rank = "紅";
-										break;
-									case 'b':
-										rank = "藍";
-										break;
-									case 'p':
-										rank = "紫";
-										break;
-								}
-								var bossname = row.bossname_kr+(row.bossname!=row.bossname_kr?" "+row.bossname:"");
-								var bosslocation = row.location_kr+(row.location!=row.location_kr?" "+row.location:"");
+								pool.query(sqlstr, function(err, rows, fields) {
+								    if (err) handleError(err);
+								    	
+									var recordset = rows;
+									var rowscnt = 0;
 
-								var autoflag = "";
-								if(row.isauto!="0"){
-									autoflag = "【自動展延"+row.isauto+"次】";
-								}
+									for(i=0;i<recordset.length;i++)
+									{
+										rowscnt ++;
+										var row = recordset[i];
+										var rank = "";
+										switch(row.rank){
+											case 'r':
+												rank = "紅";
+												break;
+											case 'b':
+												rank = "藍";
+												break;
+											case 'p':
+												rank = "紫";
+												break;
+										}
+										var bossname = row.bossname_kr+(row.bossname!=row.bossname_kr?" "+row.bossname:"");
+										var bosslocation = row.location_kr+(row.location!=row.location_kr?" "+row.location:"");
 
-								var msgtitle = row.bossid+" "+ bossname + " ("+rank+") " + autoflag ;							
-								var msgcontent = "地點："+bosslocation+"\n";
-									msgcontent += "預計時間："+(row.reborn == null ? "無":row.reborn) + " \n";
-									msgcontent += "距離現在："+row.dues + "分鐘 \n";									
-								
-								bossmsg.addField(msgtitle,msgcontent);
+										var autoflag = "";
+										if(row.isauto!="0"){
+											autoflag = "【自動展延"+row.isauto+"次】";
+										}
+
+										var msgtitle = row.bossid+" "+ bossname + " ("+rank+") " + autoflag ;							
+										var msgcontent = "地點："+bosslocation+"\n";
+											msgcontent += "預計時間："+(row.reborn == null ? "無":row.reborn) + " \n";
+											msgcontent += "距離現在："+row.dues + "分鐘 \n";									
+										
+										bossmsg.addField(msgtitle,msgcontent);
 
 
-								//msgcontent += "【" + row.bossid +" "+ row.bossname + " ("+rank+") 在 "+row.location+" ，" + " - 預計時間:"+row.reborn+" - 距離現在："+ row.dues +"分鐘】\n";
-								
-								//message.channel.send(msgcontent);						
-							}
-							if(rowscnt>0){
-								message.channel.send(bossmsg);	
-							}else{
-								message.channel.send("目前的野王都沒有擊殺記錄喔!!");	
-							}
-							//console.log(msgcontent);
+										//msgcontent += "【" + row.bossid +" "+ row.bossname + " ("+rank+") 在 "+row.location+" ，" + " - 預計時間:"+row.reborn+" - 距離現在："+ row.dues +"分鐘】\n";
+										
+										//message.channel.send(msgcontent);						
+									}
+									if(rowscnt>0){
+										message.channel.send(bossmsg);	
+									}else{
+										message.channel.send("目前 "+mapi+" 區的野王都沒有擊殺記錄喔!!");	
+									}
+									//console.log(msgcontent);
 
-						});
+								});
+
+
+						}	
+
+						
+
+						
 
 					}else{
 						var bossid = args[0];
