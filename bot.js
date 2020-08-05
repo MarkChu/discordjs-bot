@@ -1246,6 +1246,7 @@ client.on('message', message => {
 								    	
 									var recordset = rows;
 									var rowscnt = 0;
+									console.log(mapi+" count:"+recordset.length);
 
 									for(i=0;i<recordset.length;i++)
 									{
@@ -1291,7 +1292,6 @@ client.on('message', message => {
 									//console.log(msgcontent);
 
 								});
-
 
 						}	
 
