@@ -7,7 +7,7 @@
     "start": "node bot.js"
   },
   "dependencies": {
-    "aws-sdk": "^2.587.0",
+    "aws-sdk": "^2.814.0",
     "discord.js": "^11.5.1",
     "http": "0.0.0",
     "moment": "^2.24.0",
